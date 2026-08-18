@@ -186,3 +186,73 @@ html[dir="rtl"] .lg\:pl-72 { padding-left: 0; padding-right: 18rem; }
 @media (max-width: 1023px) {
   html[dir="rtl"] .lg\:pl-72 { padding-right: 0; }
 }
+
+/* Professional light portal system. The existing dark design remains available
+   through the .dark class managed by ThemeProvider. */
+html:not(.dark) {
+  color-scheme: light;
+}
+
+html:not(.dark) .bg-\[\#080b12\],
+html:not(.dark) .bg-\[\#080a12\],
+html:not(.dark) .bg-\[\#0b0e18\] {
+  background-color: #f5f7fb !important;
+}
+
+html:not(.dark) .bg-\[\#0b0f18\],
+html:not(.dark) .bg-\[\#0e111d\],
+html:not(.dark) .bg-\[\#101521\],
+html:not(.dark) .bg-\[\#101423\] {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) [class*="bg-white/"] {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+}
+
+html:not(.dark) [class*="border-white"] {
+  border-color: rgba(148, 163, 184, 0.24) !important;
+}
+
+html:not(.dark) .text-white,
+html:not(.dark) [class*="text-slate-100"],
+html:not(.dark) [class*="text-slate-200"] {
+  color: #172033 !important;
+}
+
+html:not(.dark) [class*="text-slate-300"],
+html:not(.dark) [class*="text-slate-400"],
+html:not(.dark) [class*="text-slate-500"],
+html:not(.dark) [class*="text-slate-600"] {
+  color: #526176 !important;
+}
+
+html:not(.dark) [class*="text-violet-"] { color: #6d28d9 !important; }
+html:not(.dark) [class*="text-cyan-"] { color: #0f766e !important; }
+
+html:not(.dark) input,
+html:not(.dark) textarea,
+html:not(.dark) select {
+  background-color: #ffffff !important;
+  color: #172033 !important;
+  border-color: rgba(148, 163, 184, 0.38) !important;
+}
+
+html:not(.dark) .bg-violet-500.text-white,
+html:not(.dark) .bg-violet-400.text-white,
+html:not(.dark) .bg-emerald-500.text-white,
+html:not(.dark) .bg-rose-500.text-white {
+  color: #ffffff !important;
+}
+
+html:not(.dark) .shadow-2xl,
+html:not(.dark) .shadow-xl,
+html:not(.dark) .shadow-lg {
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.09) !important;
+}
+
+html:not(.dark) .bg-black\/10,
+html:not(.dark) .bg-black\/15,
+html:not(.dark) .bg-black\/20 {
+  background-color: rgba(226, 232, 240, 0.54) !important;
+}
