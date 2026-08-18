@@ -39,6 +39,15 @@ describe("manager.createUnit", () => {
     await expect(appRouter.createCaller(context("TENANT")).manager.listProperties()).rejects.toThrow("Manager role required");
   });
 
+  it("lists units only inside the authenticated Manager organization", async () => {
+    const visibleUnits = [{ id: 22, unitNumber: "QA-101", floorNumber: 1, propertyName: "QA Property" }];
+    const db = { select: vi.fn(() => ({ from: vi.fn(() => ({ innerJoin: vi.fn(() => ({ where: vi.fn(async () => visibleUnits) })) })) })) };
+    getDbMock.mockResolvedValue(db);
+
+    await expect(appRouter.createCaller(context("PROPERTY_MANAGER")).manager.listUnits()).resolves.toEqual(visibleUnits);
+    await expect(appRouter.createCaller(context("TENANT")).manager.listUnits()).rejects.toThrow("Manager role required");
+  });
+
   it("creates a unit only inside the Manager organization and returns its access code", async () => {
     const db = createDb();
     getDbMock.mockResolvedValue(db);

@@ -18,6 +18,7 @@ export function ManagerAccessTools() {
   const [ownerUnitId, setOwnerUnitId] = useState("");
   const reset = trpc.manager.sendPasswordReset.useMutation();
   const properties = trpc.manager.listProperties.useQuery();
+  const units = trpc.manager.listUnits.useQuery();
   const createUnit = trpc.manager.createUnit.useMutation();
   const createOwner = trpc.manager.createOwner.useMutation();
 
@@ -26,6 +27,7 @@ export function ManagerAccessTools() {
     try {
       const result = await createUnit.mutateAsync({ propertyId: Number(propertyId), unitNumber, floorNumber: Number(floorNumber) });
       setUnitNumber("");
+      await units.refetch();
       toast.success(t(`Unit created. Access code: ${result.accessCode}`, `تم إنشاء الوحدة. رمز الدخول: ${result.accessCode}`));
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("Unable to create unit", "تعذر إنشاء الوحدة"));
@@ -57,7 +59,7 @@ export function ManagerAccessTools() {
 
     <Card className="border-emerald-400/15 bg-emerald-400/[.03]">
       <CardHeader><CardTitle className="flex items-center gap-2 text-base"><UserRoundPlus size={18} className="text-emerald-300"/>{t("Add a flat owner", "إضافة مالك شقة")}</CardTitle><p className="text-sm text-slate-400">{t("Create a separate owner account and link it to a unit.", "أنشئ حساب مالك منفصلاً واربطه بوحدة.")}</p></CardHeader>
-      <CardContent><form className="space-y-3" onSubmit={submitOwner}><Input required value={ownerName} onChange={event => setOwnerName(event.target.value)} placeholder={t("Owner name", "اسم المالك")}/><Input required type="email" value={ownerEmail} onChange={event => setOwnerEmail(event.target.value)} placeholder={t("Owner email", "بريد المالك الإلكتروني")}/><Input required inputMode="numeric" value={ownerUnitId} onChange={event => setOwnerUnitId(event.target.value)} placeholder={t("Unit ID", "معرف الوحدة")}/><Button type="submit" disabled={createOwner.isPending || !ownerName.trim() || !ownerEmail.trim() || !Number(ownerUnitId)} className="w-full bg-emerald-500 text-black hover:bg-emerald-400">{createOwner.isPending ? t("Creating...", "جارٍ الإنشاء...") : t("Create owner account", "إنشاء حساب المالك")}</Button></form></CardContent>
+      <CardContent><form className="space-y-3" onSubmit={submitOwner}><Input required value={ownerName} onChange={event => setOwnerName(event.target.value)} placeholder={t("Owner name", "اسم المالك")}/><Input required type="email" value={ownerEmail} onChange={event => setOwnerEmail(event.target.value)} placeholder={t("Owner email", "بريد المالك الإلكتروني")}/><select aria-label={t("Unit", "الوحدة")} value={ownerUnitId} onChange={event => setOwnerUnitId(event.target.value)} required className="flex h-10 w-full rounded-md border border-white/10 bg-white/[.03] px-3 text-sm"><option value="">{units.isLoading ? t("Loading units...", "جارٍ تحميل الوحدات...") : t("Choose a unit", "اختر وحدة")}</option>{(units.data ?? []).map(unit => <option key={unit.id} value={unit.id}>{unit.propertyName} · {unit.unitNumber}</option>)}</select><Button type="submit" disabled={createOwner.isPending || !ownerName.trim() || !ownerEmail.trim() || !Number(ownerUnitId)} className="w-full bg-emerald-500 text-black hover:bg-emerald-400">{createOwner.isPending ? t("Creating...", "جارٍ الإنشاء...") : t("Create owner account", "إنشاء حساب المالك")}</Button></form></CardContent>
     </Card>
   </div>;
 }
