@@ -70,6 +70,13 @@ describe("ticket mutation procedures", () => {
     expect(db.inserts).toHaveLength(4);
   });
 
+  it("returns only the assigned unit's tickets to a Flat Owner", async () => {
+    const ownerUnitTicket = { id: 601, organizationId: 1, unitId: 12, status: "RESOLVED", submittedById: 20, assignedToId: 30 };
+    const otherUnitTicket = { ...ownerUnitTicket, id: 602, unitId: 13, status: "OPEN" };
+    getDbMock.mockResolvedValueOnce(createDb([ownerUnitTicket, otherUnitTicket]));
+    await expect(appRouter.createCaller(createContext("FLAT_OWNER")).tickets.list({})).resolves.toEqual([ownerUnitTicket]);
+  });
+
   it("rejects ticket media uploads when the organization-scoped ticket lookup has no match", async () => {
     const crossOrgDb = createDb([]);
     getDbMock.mockResolvedValueOnce(crossOrgDb);

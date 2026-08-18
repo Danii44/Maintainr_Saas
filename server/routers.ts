@@ -240,11 +240,13 @@ export const appRouter = router({
       if (!db || !ctx.user.organizationId) return [];
       const filters = [eq(tickets.organizationId, ctx.user.organizationId)];
       if (ctx.user.role === "TENANT") filters.push(or(eq(tickets.submittedById, ctx.user.id), eq(tickets.unitId, ctx.user.unitId ?? -1))!);
+      if (ctx.user.role === "FLAT_OWNER") filters.push(eq(tickets.unitId, ctx.user.unitId ?? -1));
       if (ctx.user.role === "TECHNICIAN") filters.push(eq(tickets.assignedToId, ctx.user.id));
       if (input?.status) filters.push(eq(tickets.status, input.status));
       if (input?.priority) filters.push(eq(tickets.priority, input.priority));
       if (input?.category) filters.push(eq(tickets.category, input.category));
-      return db.select().from(tickets).where(and(...filters)).orderBy(desc(tickets.createdAt));
+      const records = await db.select().from(tickets).where(and(...filters)).orderBy(desc(tickets.createdAt));
+      return ctx.user.role === "FLAT_OWNER" ? records.filter(ticket => ticket.unitId === ctx.user.unitId) : records;
     }),
     create: protectedProcedure.input(z.object({ unitId: z.number().int().positive(), title: z.string().min(3), description: z.string().min(10), category, priority: priority.default("MEDIUM"), preferredAccessTime: z.string().optional() })).mutation(async ({ ctx, input }) => {
       const db = await getDb();

@@ -15,3 +15,9 @@ The standalone SaaS source contains an additional local commit, `b7e2650` (`fix:
 ## Security note
 
 The QA accounts and all related records are disposable test data. Do not use them for customers; delete the QA organization and its dependent records after the release verification is complete.
+
+## Published release monitoring
+
+GitHub authorization was restored and the standalone SaaS main branch was pushed through commit `72d8fa1`; the commercial main branch was pushed through commit `27ee601`. Netlify showed the SaaS production deployment for `72d8fa1` as **Building**, with the prior `30639d0` production release still published. During this build window, command-line requests to both public domains temporarily returned HTTP 500. The deployment status must be rechecked after the build completes before treating the live release as verified.
+
+The commercial dashboard subsequently confirmed **Published main@27ee601** (`feat: expand animated commercial product story`) in 31 seconds. The SaaS dashboard still displayed `72d8fa1` as Building at the prior check, so only the commercial release can currently be treated as live-verified.
