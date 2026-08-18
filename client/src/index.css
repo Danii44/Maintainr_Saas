@@ -199,6 +199,12 @@ html:not(.dark) .bg-\[\#0b0e18\] {
   background-color: #f5f7fb !important;
 }
 
+html:not(.dark) [class*="bg-[#080b12]/"],
+html:not(.dark) [class*="bg-[#080a12]/"],
+html:not(.dark) [class*="bg-[#0b0e18]/"] {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+}
+
 html:not(.dark) .bg-\[\#0b0f18\],
 html:not(.dark) .bg-\[\#0e111d\],
 html:not(.dark) .bg-\[\#101521\],
