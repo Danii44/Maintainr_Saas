@@ -29,6 +29,12 @@ const technicianOnly = protectedProcedure.use(({ ctx, next }) => {
   return next();
 });
 
+function toPublicUser<T extends { passwordHash?: unknown } | null>(user: T) {
+  if (!user) return null;
+  const { passwordHash: _passwordHash, ...publicUser } = user;
+  return publicUser;
+}
+
 export const appRouter = router({
   system: systemRouter,
   workspace: router({
@@ -47,21 +53,21 @@ export const appRouter = router({
     }),
   }),
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
+    me: publicProcedure.query(opts => toPublicUser(opts.ctx.user)),
     signIn: publicProcedure.input(z.object({ email: z.string().email(), password: z.string().min(8) })).mutation(async ({ ctx, input }) => {
       const result = await authenticate(input.email, input.password);
       ctx.res.cookie(COOKIE_NAME, result.token, { ...sessionCookieOptions(ctx.req), maxAge: Math.floor(ONE_YEAR_MS / 1000) });
-      return result.user;
+      return toPublicUser(result.user);
     }),
     signUp: publicProcedure.input(z.object({ name: z.string().min(2), email: z.string().email(), password: z.string().min(8) })).mutation(async ({ ctx, input }) => {
       const result = await register(input.email, input.password, input.name);
       ctx.res.cookie(COOKIE_NAME, result.token, { ...sessionCookieOptions(ctx.req), maxAge: Math.floor(ONE_YEAR_MS / 1000) });
-      return result.user;
+      return toPublicUser(result.user);
     }),
     createWorkspace: publicProcedure.input(z.object({ name: z.string().min(2).max(255), email: z.string().email(), password: z.string().min(8), organizationName: z.string().min(2).max(255), organizationNameArabic: z.string().max(255).optional(), portfolioCategory: z.enum(["MULTI_FAMILY", "RESIDENTIAL", "COMMERCIAL", "MIXED_USE", "OTHER"]), portfolioSizeRange: z.enum(["1-10", "11-50", "51-250", "251-1000", "1000+"]), firstPropertyName: z.string().max(255).optional(), firstPropertyAddress: z.string().max(1000).optional() }).superRefine((value, ctx) => { if (Boolean(value.firstPropertyName?.trim()) !== Boolean(value.firstPropertyAddress?.trim())) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Enter both the first property name and address, or leave both blank / أدخل اسم وعنوان العقار الأول معاً أو اتركهما فارغين" }); })).mutation(async ({ ctx, input }) => {
       const result = await registerWorkspace(input);
       ctx.res.cookie(COOKIE_NAME, result.token, { ...sessionCookieOptions(ctx.req), maxAge: Math.floor(ONE_YEAR_MS / 1000) });
-      return result.user;
+      return toPublicUser(result.user);
     }),
     requestPasswordReset: publicProcedure.input(z.object({ email: z.string().email() })).mutation(({ input }) => requestPasswordReset(input.email)),
     resetPassword: publicProcedure.input(z.object({ token: z.string().min(20), password: z.string().min(8) })).mutation(({ input }) => resetPassword(input.token, input.password)),
@@ -72,7 +78,7 @@ export const appRouter = router({
       const user = await acceptInvitation(input.token, input.password);
       const session = await authenticate(user.email ?? "", input.password);
       ctx.res.cookie(COOKIE_NAME, session.token, { ...sessionCookieOptions(ctx.req), maxAge: Math.floor(ONE_YEAR_MS / 1000) });
-      return session.user;
+      return toPublicUser(session.user);
     }),
     logout: publicProcedure.mutation(async ({ ctx }) => {
       await revokeSession(await getSessionToken(ctx.req));

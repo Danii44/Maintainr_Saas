@@ -33,7 +33,8 @@ describe("local auth router", () => {
     authMocks.authenticate.mockResolvedValue({ user, token: "raw-session" });
     const { ctx, cookies } = context();
     const result = await appRouter.createCaller(ctx).auth.signIn({ email: "local@example.com", password: "password123" });
-    expect(result).toEqual(user);
+    expect(result).toMatchObject({ id: user.id, email: user.email, role: user.role });
+    expect(result).not.toHaveProperty("passwordHash");
     expect(cookies[0]).toMatchObject({ name: "app_session_id", value: "raw-session", options: { httpOnly: true, secure: true, sameSite: "lax" } });
   });
 
@@ -42,6 +43,7 @@ describe("local auth router", () => {
     const { ctx } = context();
     const result = await appRouter.createCaller(ctx).auth.signUp({ name: "Local User", email: "local@example.com", password: "password123" });
     expect(result.role).toBe("PROPERTY_MANAGER");
+    expect(result).not.toHaveProperty("passwordHash");
     expect(authMocks.register).toHaveBeenCalledWith("local@example.com", "password123", "Local User");
   });
 
@@ -49,7 +51,9 @@ describe("local auth router", () => {
     authMocks.registerWorkspace.mockResolvedValue({ user, organization: { id: 21, name: "Northstar Realty" }, token: "workspace-session" });
     const { ctx, cookies } = context();
     const input = { name: "Workspace Owner", email: "owner@northstar.example", password: "password123", organizationName: "Northstar Realty", organizationNameArabic: "نورث ستار", portfolioCategory: "MULTI_FAMILY" as const, portfolioSizeRange: "11-50" as const, firstPropertyName: "Northstar Tower", firstPropertyAddress: "123 Market Street" };
-    await expect(appRouter.createCaller(ctx).auth.createWorkspace(input)).resolves.toEqual(user);
+    const result = await appRouter.createCaller(ctx).auth.createWorkspace(input);
+    expect(result).toMatchObject({ id: user.id, email: user.email, role: user.role });
+    expect(result).not.toHaveProperty("passwordHash");
     expect(authMocks.registerWorkspace).toHaveBeenCalledWith(input);
     expect(cookies[0]).toMatchObject({ name: "app_session_id", value: "workspace-session", options: { httpOnly: true, secure: true, sameSite: "lax" } });
   });
@@ -68,7 +72,9 @@ describe("local auth router", () => {
   it("returns the authenticated context user through auth.me", async () => {
     const { ctx } = context();
     ctx.user = user;
-    expect(await appRouter.createCaller(ctx).auth.me()).toEqual(user);
+    const result = await appRouter.createCaller(ctx).auth.me();
+    expect(result).toMatchObject({ id: user.id, email: user.email, role: user.role });
+    expect(result).not.toHaveProperty("passwordHash");
   });
 
   it("revokes the current session and clears the cookie on logout", async () => {
