@@ -29,3 +29,25 @@ The follow-up SaaS security release is now live: Netlify confirmed **Published m
 The published sign-in route was captured in its default light mode at a 1440-pixel English desktop viewport and a 390-pixel Arabic RTL mobile viewport. Both retain readable pale surfaces, clear hierarchy, responsive form controls, bilingual content, and the accessible floating optional-dark selector. No dark default surface is present; the control offers dark mode only as an explicit user preference.
 
 An authenticated production Manager portal capture confirms the live light-default dashboard renders the shared workspace shell, bilingual control, profile navigation, Manager checklist, secure account-access panel, unit setup tools, and floating optional-dark selector without a dark default surface.
+
+Netlify confirmed **Published main@eff884b** (`fix: remove dark tenant surface in light mode`) in 21 seconds. The Tenant light-surface correction is therefore available for live authenticated visual revalidation.
+
+The corrected Tenant capture confirms the active-request workflow card is now a pale cyan-to-slate operational surface with readable status progression, request form, history panel, reminders, and the optional-dark selector. The authenticated Technician capture likewise shows a light work queue, assigned-job detail, completion checklist, profile navigation, and optional-dark selector; no dark default panels appear in either role portal.
+
+The retained live Owner and Manager captures were re-inspected after the Tenant correction. The Owner overview shows a pale reminder panel, white operational metrics, and a readable portfolio-activity card. The Manager setup, account-access, and unit-provisioning surfaces use pale neutral/cyan panels with legible controls. Across all four authenticated roles, no residual dark dashboard-gradient card remains while light mode is selected.
+
+The capture helper was allowed a longer settle period and a refreshed production Manager screenshot confirmed the live portal fully resolves from its loading state into the same readable light dashboard. The expanded wait is limited to the internal QA helper and does not change product runtime behavior.
+
+The refreshed live Tenant portal retains a pale cyan-to-slate active-request surface, legible status steps, a clear issue-report entry point, reminder acknowledgement state, maintenance history, and the optional-dark selector. No dark gradient card is present in default light mode.
+
+The refreshed live Technician portal presents an off-white assigned-work queue, pale completion workflow, readable ticket metadata, profile navigation, and the optional-dark selector. The refreshed Owner portal presents pale reminders, white metric cards, a readable portfolio record, and the optional-dark selector. The final live desktop captures confirm all four QA roles load their expected light portal without a residual dark dashboard-gradient surface.
+
+The standalone SaaS regression suite was re-run after the live visual checks: **21 test files and 68 tests passed**. No product-source correction was warranted because the updated production captures and the automated suite both support the light-mode implementation.
+
+Arabic RTL mobile captures at 390 pixels confirm that the Manager checklist and Tenant issue-report workflow reverse and stack correctly, retain light surfaces, preserve readable Arabic hierarchy, and leave the floating dark selector reachable. The abbreviated English fragment in the Tenant reminder is a deliberately English-labelled disposable QA record title rather than unlocalized product interface text.
+
+The Technician and Owner Arabic RTL mobile captures show the same correct right-to-left hierarchy, mobile navigation, light operational cards, and accessible dark selector. Work-ticket titles remain English only where they are disposable QA record content; product labels, statuses, actions, metrics, and supporting instructions render in Arabic.
+
+The Manager portal was then verified with a stored dark preference across a fresh portal load. The persisted dark capture shows the inverse **Light** control, and a follow-up stored-light capture restored the light portal and **Dark** control. The selector is implemented as a native `button` with a state-specific accessible name, so it remains keyboard-operable; its theme choice persists through the `maintainr-theme` local-storage key.
+
+The standalone `pnpm build:netlify` production build also completed successfully after this live QA pass. Vite emitted an advisory about a large JavaScript chunk, but it did not fail the build and is a performance-refinement opportunity rather than a release blocker.
