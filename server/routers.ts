@@ -100,6 +100,11 @@ export const appRouter = router({
     approveApplication: managerOnly.input(z.object({ applicationId: z.number().int().positive(), unitId: z.number().int().positive().optional() })).mutation(({ ctx, input }) => approveApplication(input.applicationId, ctx.user, input.unitId)),
     rejectApplication: managerOnly.input(z.object({ applicationId: z.number().int().positive() })).mutation(({ ctx, input }) => rejectApplication(input.applicationId, ctx.user)),
     sendPasswordReset: managerOnly.input(z.object({ email: z.string().email() })).mutation(({ input }) => requestPasswordReset(input.email)),
+    listProperties: managerOnly.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db || !ctx.user.organizationId) throw new Error(reminderError("database"));
+      return db.select({ id: properties.id, name: properties.name, address: properties.address, totalUnits: properties.totalUnits }).from(properties).where(eq(properties.organizationId, ctx.user.organizationId));
+    }),
     createUnit: managerOnly.input(z.object({ propertyId: z.number().int().positive(), unitNumber: z.string().min(1).max(32), floorNumber: z.number().int().min(0).max(999).default(1) })).mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db || !ctx.user.organizationId) throw new Error(reminderError("database"));

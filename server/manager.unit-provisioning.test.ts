@@ -30,6 +30,15 @@ function createDb({ property = { id: 15 }, existingUnit = false }: { property?: 
 describe("manager.createUnit", () => {
   beforeEach(() => vi.clearAllMocks());
 
+  it("lists properties only inside the authenticated Manager organization", async () => {
+    const visibleProperties = [{ id: 15, name: "QA Property", address: "QA Only", totalUnits: 0 }];
+    const db = { select: vi.fn(() => ({ from: vi.fn(() => ({ where: vi.fn(async () => visibleProperties) })) })) };
+    getDbMock.mockResolvedValue(db);
+
+    await expect(appRouter.createCaller(context("PROPERTY_MANAGER")).manager.listProperties()).resolves.toEqual(visibleProperties);
+    await expect(appRouter.createCaller(context("TENANT")).manager.listProperties()).rejects.toThrow("Manager role required");
+  });
+
   it("creates a unit only inside the Manager organization and returns its access code", async () => {
     const db = createDb();
     getDbMock.mockResolvedValue(db);
@@ -53,4 +62,3 @@ describe("manager.createUnit", () => {
     await expect(appRouter.createCaller(context("TENANT")).manager.createUnit({ propertyId: 15, unitNumber: "QA-101" })).rejects.toThrow("Manager role required");
   });
 });
-
