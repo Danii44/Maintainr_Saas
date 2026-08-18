@@ -8,7 +8,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { acceptInvitation, approveApplication, listApplications, rejectApplication, submitRoleApplication } from "./invitations";
-import { developerSettings, maintenanceReminders, organizations, reminderAcknowledgements, reminderRuns, roleApplications, ticketLogs, ticketMedia, tickets, units, users } from "../drizzle/schema";
+import { developerSettings, maintenanceReminders, organizations, properties, reminderAcknowledgements, reminderRuns, roleApplications, ticketLogs, ticketMedia, tickets, units, users } from "../drizzle/schema";
 import { sendTicketEmail } from "./notifications";
 import { storagePut } from "./storage";
 import { canMutateManagerTicket } from "../shared/managerActionRules";
@@ -107,6 +107,21 @@ export const appRouter = router({
       const result = await db.insert(users).values({ openId, organizationId: ctx.user.organizationId, unitId: input.unitId, name: input.name, email: input.email, phone: input.phone, role: "TENANT", loginMethod: "invitation" }).returning({ id: users.id });
       await sendTicketEmail({ event: "TICKET_CREATED", recipientEmail: input.email, subject: "Your Maintainr resident invitation", text: `Hello ${input.name}, your property manager has invited you to Maintainr. Use the /join-unit flow after signing in.` });
       return { success: true, userId: result[0]?.id ?? null };
+    }),
+    createOwner: managerOnly.input(z.object({ name: z.string().min(2), email: z.string().email(), phone: z.string().optional(), unitId: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db || !ctx.user.organizationId) throw new Error(reminderError("database"));
+      const unit = (await db.select({ id: units.id }).from(units).innerJoin(properties, eq(units.propertyId, properties.id)).where(and(eq(units.id, input.unitId), eq(properties.organizationId, ctx.user.organizationId))).limit(1))[0];
+      if (!unit) throw new Error("Unit not found in your organization / الوحدة غير موجودة في مؤسستك");
+      const existing = (await db.select({ id: users.id }).from(users).where(eq(users.email, input.email.trim().toLowerCase())).limit(1))[0];
+      if (existing) throw new Error("An account already exists for this email / يوجد حساب لهذا البريد بالفعل");
+      const openId = `invited_${crypto.randomUUID()}`;
+      const result = await db.insert(users).values({ openId, organizationId: ctx.user.organizationId, unitId: unit.id, name: input.name.trim(), email: input.email.trim().toLowerCase(), phone: input.phone?.trim() || null, role: "FLAT_OWNER", loginMethod: "invitation" }).returning({ id: users.id });
+      const userId = result[0]?.id ?? null;
+      if (!userId) throw new Error("Unable to create owner account / تعذر إنشاء حساب المالك");
+      await db.update(units).set({ ownerId: userId }).where(eq(units.id, unit.id));
+      await sendTicketEmail({ event: "TICKET_CREATED", recipientEmail: input.email, subject: "Your Maintainr owner invitation", text: `Hello ${input.name.trim()}, your property manager has invited you to Maintainr as a flat owner. Complete your secure account activation before signing in.` });
+      return { success: true, userId };
     }),
     inviteTechnician: managerOnly.input(z.object({ name: z.string().min(2), email: z.string().email(), phone: z.string().optional() })).mutation(async ({ ctx, input }) => {
       const db = await getDb();
