@@ -100,6 +100,17 @@ export const appRouter = router({
     approveApplication: managerOnly.input(z.object({ applicationId: z.number().int().positive(), unitId: z.number().int().positive().optional() })).mutation(({ ctx, input }) => approveApplication(input.applicationId, ctx.user, input.unitId)),
     rejectApplication: managerOnly.input(z.object({ applicationId: z.number().int().positive() })).mutation(({ ctx, input }) => rejectApplication(input.applicationId, ctx.user)),
     sendPasswordReset: managerOnly.input(z.object({ email: z.string().email() })).mutation(({ input }) => requestPasswordReset(input.email)),
+    createUnit: managerOnly.input(z.object({ propertyId: z.number().int().positive(), unitNumber: z.string().min(1).max(32), floorNumber: z.number().int().min(0).max(999).default(1) })).mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db || !ctx.user.organizationId) throw new Error(reminderError("database"));
+      const property = (await db.select({ id: properties.id }).from(properties).where(and(eq(properties.id, input.propertyId), eq(properties.organizationId, ctx.user.organizationId))).limit(1))[0];
+      if (!property) throw new Error("Property not found in your organization / العقار غير موجود في مؤسستك");
+      const existing = (await db.select({ id: units.id }).from(units).where(and(eq(units.propertyId, property.id), eq(units.unitNumber, input.unitNumber.trim()))).limit(1))[0];
+      if (existing) throw new Error("A unit with this number already exists / توجد وحدة بهذا الرقم بالفعل");
+      const accessCode = String(Math.floor(100000 + Math.random() * 900000));
+      const result = await db.insert(units).values({ propertyId: property.id, unitNumber: input.unitNumber.trim(), floorNumber: input.floorNumber, accessCode }).returning({ id: units.id });
+      return { success: true, unitId: result[0]?.id ?? null, accessCode };
+    }),
     createTenant: managerOnly.input(z.object({ name: z.string().min(2), email: z.string().email(), phone: z.string().optional(), unitId: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db || !ctx.user.organizationId) throw new Error(reminderError("database"));
