@@ -133,6 +133,12 @@
   }
 }
 
+html, body, #root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 @layer components {
   /**
    * Custom container utility that centers content and adds responsive padding.
@@ -178,6 +184,20 @@
 
 /* Bilingual layout support */
 html[dir="rtl"] body { direction: rtl; }
+html[dir="rtl"] body,
+html[dir="rtl"] #root,
+html[dir="rtl"] .maintainr-public-home {
+  width: 100%;
+  max-width: 100vw;
+  min-width: 0;
+  overflow-x: hidden;
+}
+html[dir="rtl"] .maintainr-public-home > header,
+html[dir="rtl"] .maintainr-public-home > main {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+}
 html[dir="rtl"] input,
 html[dir="rtl"] textarea,
 html[dir="rtl"] select { text-align: right; }
@@ -201,7 +221,8 @@ html:not(.dark) .bg-\[\#0b0e18\] {
 
 html:not(.dark) [class*="bg-[#080b12]/"],
 html:not(.dark) [class*="bg-[#080a12]/"],
-html:not(.dark) [class*="bg-[#0b0e18]/"] {
+html:not(.dark) [class*="bg-[#0b0e18]/"],
+html:not(.dark) [class*="bg-[#101521]/"] {
   background-color: rgba(255, 255, 255, 0.92) !important;
 }
 
@@ -233,7 +254,7 @@ html:not(.dark) [class*="text-slate-600"] {
   color: #526176 !important;
 }
 
-html:not(.dark) [class*="text-violet-"] { color: #6d28d9 !important; }
+html:not(.dark) [class*="text-violet-"] { color: #0f766e !important; }
 html:not(.dark) [class*="text-cyan-"] { color: #0f766e !important; }
 
 html:not(.dark) input,
@@ -268,3 +289,11 @@ html:not(.dark) [class*="bg-gradient-to-br"][class*="from-cyan-400"][class*="to-
   border-color: rgba(20, 184, 166, 0.26) !important;
   box-shadow: 0 18px 44px rgba(14, 116, 144, 0.10) !important;
 }
+
+/* Shared product identity: deep teal primary, sky supporting accent, no purple primary controls. */
+[class*="bg-violet-"] { background-color: #0f766e !important; }
+[class*="text-violet-"] { color: #0f766e !important; }
+[class*="border-violet-"] { border-color: rgba(15, 118, 110, 0.32) !important; }
+[class*="shadow-violet-"] { --tw-shadow-color: rgba(15, 118, 110, 0.20) !important; }
+.dark [class*="text-violet-"] { color: #5eead4 !important; }
+.dark [class*="border-violet-"] { border-color: rgba(94, 234, 212, 0.32) !important; }

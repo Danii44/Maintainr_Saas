@@ -231,7 +231,7 @@ export const appRouter = router({
       const db = await getDb();
       if (!db || !ctx.user.organizationId) return null;
       const current = (await db.select().from(developerSettings).where(eq(developerSettings.organizationId, ctx.user.organizationId)).limit(1))[0];
-      return current ?? { projectName: "Maintainr", projectNameArabic: "Maintainr", logoUrl: null, primaryColor: "#8B5CF6", accentColor: "#22D3EE", emailNotificationsEnabled: false, smsNotificationsEnabled: false };
+      return current ?? { projectName: "Maintainr", projectNameArabic: "Maintainr", logoUrl: null, primaryColor: "#0F766E", accentColor: "#0EA5E9", emailNotificationsEnabled: false, smsNotificationsEnabled: false };
     }),
     update: managerOnly.input(z.object({ projectName: z.string().min(2).max(120), projectNameArabic: z.string().min(2).max(120), logoUrl: z.string().url().optional().or(z.literal("")), primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/), accentColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/), emailNotificationsEnabled: z.boolean(), smsNotificationsEnabled: z.boolean() })).mutation(async ({ ctx, input }) => {
       const db = await getDb();
