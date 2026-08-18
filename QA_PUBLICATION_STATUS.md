@@ -21,3 +21,11 @@ The QA accounts and all related records are disposable test data. Do not use the
 GitHub authorization was restored and the standalone SaaS main branch was pushed through commit `72d8fa1`; the commercial main branch was pushed through commit `27ee601`. Netlify showed the SaaS production deployment for `72d8fa1` as **Building**, with the prior `30639d0` production release still published. During this build window, command-line requests to both public domains temporarily returned HTTP 500. The deployment status must be rechecked after the build completes before treating the live release as verified.
 
 The commercial dashboard subsequently confirmed **Published main@27ee601** (`feat: expand animated commercial product story`) in 31 seconds. The SaaS dashboard still displayed `72d8fa1` as Building at the prior check, so only the commercial release can currently be treated as live-verified.
+
+The follow-up SaaS security release is now live: Netlify confirmed **Published main@4a84ccc** (`fix: scope owner tickets to assigned unit`) in 26 seconds. The authorization correction is covered by the standalone test suite, which now passes 68 tests.
+
+## Live light and RTL evidence
+
+The published sign-in route was captured in its default light mode at a 1440-pixel English desktop viewport and a 390-pixel Arabic RTL mobile viewport. Both retain readable pale surfaces, clear hierarchy, responsive form controls, bilingual content, and the accessible floating optional-dark selector. No dark default surface is present; the control offers dark mode only as an explicit user preference.
+
+An authenticated production Manager portal capture confirms the live light-default dashboard renders the shared workspace shell, bilingual control, profile navigation, Manager checklist, secure account-access panel, unit setup tools, and floating optional-dark selector without a dark default surface.

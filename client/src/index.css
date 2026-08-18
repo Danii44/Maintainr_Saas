@@ -262,3 +262,9 @@ html:not(.dark) .bg-black\/15,
 html:not(.dark) .bg-black\/20 {
   background-color: rgba(226, 232, 240, 0.54) !important;
 }
+
+html:not(.dark) [class*="bg-gradient-to-br"][class*="from-cyan-400"][class*="to-[#101521]"] {
+  background: linear-gradient(135deg, #ecfeff 0%, #f8fafc 54%, #eef2ff 100%) !important;
+  border-color: rgba(20, 184, 166, 0.26) !important;
+  box-shadow: 0 18px 44px rgba(14, 116, 144, 0.10) !important;
+}
