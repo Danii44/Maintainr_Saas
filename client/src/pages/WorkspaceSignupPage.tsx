@@ -34,6 +34,7 @@ export function WorkspaceSignupPage() {
     }
     try {
       const user = await createWorkspace.mutateAsync({ name, email, password, organizationName, organizationNameArabic: organizationNameArabic || undefined, portfolioCategory, portfolioSizeRange, firstPropertyName: firstPropertyName || undefined, firstPropertyAddress: firstPropertyAddress || undefined });
+      if (!user) throw new Error(t("Workspace creation did not return an account.", "لم يُرجع إنشاء مساحة العمل حساباً."));
       toast.success(t("Workspace created. Welcome to Maintainr.", "تم إنشاء مساحة العمل. أهلاً بك في مينتينر."));
       navigate(user.role === "PROPERTY_MANAGER" ? "/manager" : "/");
     } catch (error) {
