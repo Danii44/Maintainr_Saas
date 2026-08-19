@@ -67,7 +67,8 @@ describe("ticket mutation procedures", () => {
     const created = await caller.tickets.create({ unitId: 9, title: "Multiple attachment test", description: "The issue includes photos from two different angles.", category: "OTHER", priority: "MEDIUM" });
     await expect(caller.tickets.attachMedia({ ticketId: created.ticketId, fileName: "front.jpg", contentType: "image/jpeg", base64Data: "data:image/jpeg;base64,ZmFrZS1pbWFnZS1ieXRlcw==" })).resolves.toMatchObject({ success: true });
     await expect(caller.tickets.attachMedia({ ticketId: created.ticketId, fileName: "side.jpg", contentType: "image/jpeg", base64Data: "data:image/jpeg;base64,ZmFrZS1pbWFnZS1ieXRlcw==" })).resolves.toMatchObject({ success: true });
-    expect(db.inserts).toHaveLength(4);
+    expect(db.inserts).toHaveLength(6);
+    expect((db.inserts[3] as { value: { purpose?: string; storageKey?: string } }).value).toMatchObject({ purpose: "ISSUE_EVIDENCE", storageKey: expect.stringContaining("tickets/") });
   });
 
   it("returns only the assigned unit's tickets to a Flat Owner", async () => {

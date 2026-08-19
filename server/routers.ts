@@ -8,9 +8,10 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { acceptInvitation, approveApplication, listApplications, rejectApplication, submitRoleApplication } from "./invitations";
-import { developerSettings, maintenanceReminders, organizations, properties, reminderAcknowledgements, reminderRuns, roleApplications, ticketLogs, ticketMedia, tickets, units, users } from "../drizzle/schema";
+import { developerSettings, evidenceAssets, maintenanceReminders, organizations, properties, reminderAcknowledgements, reminderRuns, roleApplications, ticketLogs, ticketMedia, tickets, units, users } from "../drizzle/schema";
 import { sendTicketEmail } from "./notifications";
 import { storagePut } from "./storage";
+import { operationsRouter } from "./operations";
 import { canMutateManagerTicket } from "../shared/managerActionRules";
 import { completionMutationError, statusMutationError } from "../shared/ticketMutationRules";
 import { canAcknowledgeReminder, filterRemindersForViewer } from "../shared/reminderRules";
@@ -37,6 +38,7 @@ function toPublicUser<T extends { passwordHash?: unknown } | null>(user: T) {
 
 export const appRouter = router({
   system: systemRouter,
+  operations: operationsRouter,
   workspace: router({
     onboarding: managerOnly.query(async ({ ctx }) => {
       const db = await getDb();
@@ -274,6 +276,7 @@ export const appRouter = router({
       const uploaded = await storagePut(`tickets/${input.ticketId}/${input.fileName}`, data, input.contentType);
       const mediaType = input.contentType.startsWith("video/") ? "VIDEO" : "IMAGE";
       await db.insert(ticketMedia).values({ ticketId: input.ticketId, uploadedById: ctx.user.id, mediaUrl: uploaded.url, mediaType });
+      await db.insert(evidenceAssets).values({ organizationId: ctx.user.organizationId, ticketId: input.ticketId, uploadedById: ctx.user.id, storageKey: uploaded.key, url: uploaded.url, fileName: input.fileName, contentType: input.contentType, purpose: ctx.user.role === "TECHNICIAN" ? "COMPLETION_PROOF" : "ISSUE_EVIDENCE" });
       return { success: true, url: uploaded.url, key: uploaded.key };
     }),
     assign: managerOnly.input(z.object({ ticketId: z.number().int().positive(), technicianId: z.number().int().positive(), priority: priority.optional() })).mutation(async ({ ctx, input }) => {

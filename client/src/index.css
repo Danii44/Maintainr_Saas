@@ -61,6 +61,12 @@
   --maintainr-muted: #617473;
   --maintainr-soft-teal: #e1f4ef;
   --maintainr-soft-sky: #e8f3f8;
+  --maintainr-surface: var(--maintainr-panel);
+  --maintainr-surface-muted: var(--maintainr-panel-subtle);
+  --maintainr-text: var(--maintainr-ink);
+  --maintainr-text-muted: var(--maintainr-muted);
+  --maintainr-text-on-accent: #ffffff;
+  --maintainr-focus: #0a8177;
   --primary: var(--maintainr-teal);
   --primary-foreground: #ffffff;
   --secondary: #eaf1ef;
@@ -104,6 +110,12 @@
   --maintainr-muted: #b0c8c2;
   --maintainr-soft-teal: #173c38;
   --maintainr-soft-sky: #173541;
+  --maintainr-surface: var(--maintainr-panel);
+  --maintainr-surface-muted: var(--maintainr-panel-subtle);
+  --maintainr-text: var(--maintainr-ink);
+  --maintainr-text-muted: var(--maintainr-muted);
+  --maintainr-text-on-accent: #ffffff;
+  --maintainr-focus: #57cbbb;
   --background: var(--maintainr-canvas);
   --foreground: var(--maintainr-ink);
   --card: var(--maintainr-panel);
@@ -193,7 +205,7 @@ html:not(.dark) [class*="text-slate-200"],
 html:not(.dark) [class*="text-slate-300"] { color: var(--maintainr-ink) !important; }
 html:not(.dark) [class*="text-slate-400"],
 html:not(.dark) [class*="text-slate-500"],
-html:not(.dark) [class*="text-slate-600"] { color: var(--maintainr-muted) !important; }
+html:not(.dark) [class*="text-slate-600"] { color: #46625e !important; }
 html:not(.dark) input,
 html:not(.dark) textarea,
 html:not(.dark) select,
@@ -217,7 +229,7 @@ aside.fixed.inset-y-0 {
 aside.fixed.inset-y-0 .text-slate-300,
 aside.fixed.inset-y-0 .text-slate-400 { color: #d3e5e0 !important; }
 aside.fixed.inset-y-0 .text-slate-500,
-aside.fixed.inset-y-0 .text-slate-600 { color: #9ab9b2 !important; }
+aside.fixed.inset-y-0 .text-slate-600 { color: #c0d8d3 !important; }
 aside.fixed.inset-y-0 .text-white { color: #ffffff !important; }
 aside.fixed.inset-y-0 > div:first-child > div:nth-child(2),
 aside.fixed.inset-y-0 > div:last-child > a {

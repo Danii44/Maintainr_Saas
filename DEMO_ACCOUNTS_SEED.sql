@@ -15,6 +15,8 @@ DECLARE
   v_technician_id integer;
   v_owner_id integer;
   v_ticket_id integer;
+  v_inquiry_id integer;
+  v_conversation_id integer;
 BEGIN
   SELECT "id" INTO v_org_id FROM "organizations" WHERE "name" = 'Maintainr Demo Organization' ORDER BY "id" LIMIT 1;
   IF v_org_id IS NULL THEN
@@ -76,11 +78,42 @@ BEGIN
     VALUES (v_org_id, v_property_id, v_unit_id, v_tenant_id, v_manager_id, 'Demo filter inspection', 'Demo reminder for checking reminder lists and acknowledgement.', 'ONCE', now() + interval '14 days', now() + interval '14 days');
   END IF;
 
+  SELECT "id" INTO v_inquiry_id FROM "serviceInquiries" WHERE "organizationId" = v_org_id AND "subject" = 'Demo access-time inquiry' ORDER BY "id" LIMIT 1;
+  IF v_inquiry_id IS NULL THEN
+    INSERT INTO "serviceInquiries" ("organizationId", "unitId", "createdById", "assignedToId", "kind", "status", "subject", "body")
+    VALUES (v_org_id, v_unit_id, v_owner_id, v_manager_id, 'INQUIRY', 'IN_REVIEW', 'Demo access-time inquiry', 'Can the maintenance visit be confirmed for the afternoon window?')
+    RETURNING "id" INTO v_inquiry_id;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM "maintenanceAppointments" WHERE "organizationId" = v_org_id AND "title" = 'Demo kitchen tap visit') THEN
+    INSERT INTO "maintenanceAppointments" ("organizationId", "propertyId", "unitId", "ticketId", "technicianId", "createdById", "title", "notes", "status", "scheduledStart", "scheduledEnd")
+    VALUES (v_org_id, v_property_id, v_unit_id, v_ticket_id, v_technician_id, v_manager_id, 'Demo kitchen tap visit', 'Demo appointment for role calendar review.', 'CONFIRMED', now() + interval '2 days', now() + interval '2 days 2 hours');
+  END IF;
+
+  SELECT "id" INTO v_conversation_id FROM "conversations" WHERE "organizationId" = v_org_id AND "subject" = 'Demo kitchen tap access update' ORDER BY "id" LIMIT 1;
+  IF v_conversation_id IS NULL THEN
+    INSERT INTO "conversations" ("organizationId", "ticketId", "subject", "kind", "createdById")
+    VALUES (v_org_id, v_ticket_id, 'Demo kitchen tap access update', 'TICKET', v_manager_id)
+    RETURNING "id" INTO v_conversation_id;
+    INSERT INTO "conversationParticipants" ("conversationId", "userId")
+    VALUES (v_conversation_id, v_manager_id), (v_conversation_id, v_tenant_id), (v_conversation_id, v_technician_id), (v_conversation_id, v_owner_id);
+    INSERT INTO "conversationMessages" ("conversationId", "authorId", "body")
+    VALUES
+      (v_conversation_id, v_manager_id, 'The technician is scheduled for the confirmed afternoon visit.'),
+      (v_conversation_id, v_tenant_id, 'Thank you. The resident will make the kitchen accessible.');
+  END IF;
+
+  INSERT INTO "conversationParticipants" ("conversationId", "userId")
+  VALUES (v_conversation_id, v_manager_id), (v_conversation_id, v_tenant_id), (v_conversation_id, v_technician_id), (v_conversation_id, v_owner_id)
+  ON CONFLICT ("conversationId", "userId") DO NOTHING;
+
   INSERT INTO "developerSettings" ("organizationId", "projectName", "projectNameArabic", "primaryColor", "accentColor", "emailNotificationsEnabled", "smsNotificationsEnabled", "updatedById")
-  VALUES (v_org_id, 'Maintainr Demo', 'Maintainr تجريبي', '#8B5CF6', '#22D3EE', false, false, v_manager_id)
+  VALUES (v_org_id, 'Maintainr Demo', 'Maintainr تجريبي', '#0F766E', '#0EA5E9', false, false, v_manager_id)
   ON CONFLICT ("organizationId") DO UPDATE SET
     "projectName" = EXCLUDED."projectName",
     "projectNameArabic" = EXCLUDED."projectNameArabic",
+    "primaryColor" = EXCLUDED."primaryColor",
+    "accentColor" = EXCLUDED."accentColor",
     "updatedById" = EXCLUDED."updatedById",
     "updatedAt" = now();
 END $$;

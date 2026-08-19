@@ -9,9 +9,11 @@ let _pool: Pool | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
+  const databaseUrl = process.env.MAINTAINR_SAAS_DATABASE_URL ?? process.env.DATABASE_URL;
+
+  if (!_db && databaseUrl) {
     try {
-      const connectionString = process.env.DATABASE_URL;
+      const connectionString = databaseUrl;
       const isSupabase = connectionString.includes("supabase.com");
       _pool = new Pool({
         connectionString,

@@ -8,6 +8,11 @@ export const statusEnum = pgEnum("status", ["OPEN", "ASSIGNED", "IN_PROGRESS", "
 export const mediaTypeEnum = pgEnum("mediaType", ["IMAGE", "VIDEO"]);
 export const reminderCadenceEnum = pgEnum("reminderCadence", ["ONCE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"]);
 export const reminderRunStatusEnum = pgEnum("reminderRunStatus", ["PENDING", "SENT"]);
+export const conversationKindEnum = pgEnum("conversationKind", ["GENERAL", "TICKET", "INQUIRY"]);
+export const inquiryKindEnum = pgEnum("inquiryKind", ["INQUIRY", "COMPLAINT"]);
+export const inquiryStatusEnum = pgEnum("inquiryStatus", ["OPEN", "IN_REVIEW", "RESOLVED", "CLOSED"]);
+export const appointmentStatusEnum = pgEnum("appointmentStatus", ["SCHEDULED", "CONFIRMED", "COMPLETED", "CANCELLED"]);
+export const evidencePurposeEnum = pgEnum("evidencePurpose", ["ISSUE_EVIDENCE", "COMPLETION_PROOF", "INQUIRY_ATTACHMENT"]);
 
 export const organizations = pgTable("organizations", {
   id: serial("id").primaryKey(),
@@ -101,6 +106,105 @@ export const ticketMedia = pgTable("ticketMedia", {
   mediaType: mediaTypeEnum("mediaType").notNull(),
   createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
 }, (table) => ({ ticketIdx: index("ticket_media_ticket_idx").on(table.ticketId) }));
+
+export const serviceInquiries = pgTable("serviceInquiries", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organizationId").notNull(),
+  unitId: integer("unitId"),
+  createdById: integer("createdById").notNull(),
+  assignedToId: integer("assignedToId"),
+  kind: inquiryKindEnum("kind").notNull().default("INQUIRY"),
+  status: inquiryStatusEnum("status").notNull().default("OPEN"),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  body: text("body").notNull(),
+  resolution: text("resolution"),
+  resolvedAt: timestamp("resolvedAt", { withTimezone: true }),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  organizationStatusIdx: index("service_inquiries_org_status_idx").on(table.organizationId, table.status, table.createdAt),
+  unitIdx: index("service_inquiries_unit_idx").on(table.unitId, table.createdAt),
+  assigneeIdx: index("service_inquiries_assignee_idx").on(table.assignedToId, table.status),
+}));
+
+export const conversations = pgTable("conversations", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organizationId").notNull(),
+  ticketId: integer("ticketId"),
+  inquiryId: integer("inquiryId"),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  kind: conversationKindEnum("kind").notNull().default("GENERAL"),
+  createdById: integer("createdById").notNull(),
+  isClosed: boolean("isClosed").notNull().default(false),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  organizationUpdatedIdx: index("conversations_org_updated_idx").on(table.organizationId, table.updatedAt),
+  ticketIdx: index("conversations_ticket_idx").on(table.ticketId),
+  inquiryIdx: index("conversations_inquiry_idx").on(table.inquiryId),
+}));
+
+export const conversationParticipants = pgTable("conversationParticipants", {
+  conversationId: integer("conversationId").notNull(),
+  userId: integer("userId").notNull(),
+  lastReadAt: timestamp("lastReadAt", { withTimezone: true }),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  conversationUserIdx: uniqueIndex("conversation_participants_conversation_user_idx").on(table.conversationId, table.userId),
+  userIdx: index("conversation_participants_user_idx").on(table.userId, table.conversationId),
+}));
+
+export const conversationMessages = pgTable("conversationMessages", {
+  id: serial("id").primaryKey(),
+  conversationId: integer("conversationId").notNull(),
+  authorId: integer("authorId").notNull(),
+  body: text("body").notNull(),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  conversationCreatedIdx: index("conversation_messages_conversation_created_idx").on(table.conversationId, table.createdAt),
+}));
+
+export const maintenanceAppointments = pgTable("maintenanceAppointments", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organizationId").notNull(),
+  propertyId: integer("propertyId"),
+  unitId: integer("unitId"),
+  ticketId: integer("ticketId"),
+  technicianId: integer("technicianId"),
+  createdById: integer("createdById").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  notes: text("notes"),
+  status: appointmentStatusEnum("status").notNull().default("SCHEDULED"),
+  scheduledStart: timestamp("scheduledStart", { withTimezone: true }).notNull(),
+  scheduledEnd: timestamp("scheduledEnd", { withTimezone: true }).notNull(),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  organizationStartIdx: index("maintenance_appointments_org_start_idx").on(table.organizationId, table.scheduledStart),
+  technicianStartIdx: index("maintenance_appointments_technician_start_idx").on(table.technicianId, table.scheduledStart),
+  unitStartIdx: index("maintenance_appointments_unit_start_idx").on(table.unitId, table.scheduledStart),
+  ticketIdx: index("maintenance_appointments_ticket_idx").on(table.ticketId),
+}));
+
+export const evidenceAssets = pgTable("evidenceAssets", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organizationId").notNull(),
+  ticketId: integer("ticketId"),
+  inquiryId: integer("inquiryId"),
+  appointmentId: integer("appointmentId"),
+  uploadedById: integer("uploadedById").notNull(),
+  storageKey: text("storageKey").notNull(),
+  url: text("url").notNull(),
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  contentType: varchar("contentType", { length: 128 }).notNull(),
+  purpose: evidencePurposeEnum("purpose").notNull(),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  ticketIdx: index("evidence_assets_ticket_idx").on(table.ticketId, table.createdAt),
+  inquiryIdx: index("evidence_assets_inquiry_idx").on(table.inquiryId, table.createdAt),
+  appointmentIdx: index("evidence_assets_appointment_idx").on(table.appointmentId, table.createdAt),
+  organizationIdx: index("evidence_assets_org_idx").on(table.organizationId, table.createdAt),
+}));
 
 export const maintenanceReminders = pgTable("maintenanceReminders", {
   id: serial("id").primaryKey(),
