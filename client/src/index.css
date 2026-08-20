@@ -557,3 +557,14 @@ aside.maintainr-dashboard-rail.fixed.inset-y-0 nav .maintainr-dashboard-nav-acti
 .maintainr-dashboard-shell [class*="bg-[#101521]"] > div:first-child[class*="border-b"] { background: linear-gradient(90deg, rgba(255,255,255,.94), rgba(234,246,243,.75)); }
 .maintainr-dashboard-shell [class*="cursor-pointer"]:hover { background: var(--maintainr-row-hover); }
 .dark .maintainr-dashboard-shell :is(button, a)[class*="border-white/10"][class*="bg-transparent"] { background: rgba(255,255,255,.04) !important; border-color: rgba(255,255,255,.1) !important; color: #d6e1ee !important; }
+
+/* Mobile usability: all icon-only dashboard controls meet a 44px touch target
+   and the fixed rail retains a comfortable safe-area clearance. */
+.maintainr-dashboard-header :is(button, a)[aria-label],
+.maintainr-dashboard-rail :is(button, a)[aria-label] { min-width: 2.75rem; min-height: 2.75rem; }
+@supports (padding: max(0px)) {
+  @media (max-width: 1023px) {
+    .maintainr-dashboard-rail { padding-bottom: max(1.25rem, calc(1.25rem + env(safe-area-inset-bottom))) !important; }
+    .maintainr-dashboard-main > :last-child { padding-bottom: max(7rem, calc(5rem + env(safe-area-inset-bottom))) !important; }
+  }
+}
