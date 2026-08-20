@@ -185,6 +185,11 @@ describe("ticket mutation procedures", () => {
     expect(db.updates).toHaveLength(1);
     expect(db.inserts).toHaveLength(1);
 
+    const localStorageDb = createDb([{ id: 90, organizationId: 1, status: "IN_PROGRESS", assignedToId: 30 }]);
+    getDbMock.mockResolvedValueOnce(localStorageDb);
+    await expect(caller.technician.complete({ ticketId: 90, proofPhotoUrl: "/manus-storage/tickets/90/qa-proof.png", resolutionNotes: "Stored proof accepted" })).resolves.toEqual({ success: true });
+    expect(localStorageDb.updates).toHaveLength(1);
+
     const wrongOrgDb = createDb([{ id: 89, organizationId: 2, status: "IN_PROGRESS", assignedToId: 30 }]);
     getDbMock.mockResolvedValueOnce(wrongOrgDb);
     await expect(caller.technician.complete({ ticketId: 89, proofPhotoUrl: "https://cdn.example/proof.jpg", resolutionNotes: "fixed" })).rejects.toThrow("Assigned ticket not found in your organization");

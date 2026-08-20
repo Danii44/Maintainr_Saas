@@ -1,4 +1,4 @@
-import { and, desc, eq, or } from "drizzle-orm";
+import { and, desc, eq, isNull, or } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
@@ -174,8 +174,9 @@ export const appRouter = router({
       const db = await getDb();
       if (!db || !ctx.user.organizationId) return [];
       const filters = [eq(maintenanceReminders.organizationId, ctx.user.organizationId)];
-      if (ctx.user.role === "TENANT" || ctx.user.role === "FLAT_OWNER") filters.push(eq(maintenanceReminders.unitId, ctx.user.unitId ?? -1));
-      if (ctx.user.role === "TECHNICIAN") filters.push(eq(maintenanceReminders.assignedToId, ctx.user.id));
+      const workspaceWide = and(isNull(maintenanceReminders.unitId), isNull(maintenanceReminders.assignedToId));
+      if (ctx.user.role === "TENANT" || ctx.user.role === "FLAT_OWNER") filters.push(or(eq(maintenanceReminders.unitId, ctx.user.unitId ?? -1), workspaceWide)!);
+      if (ctx.user.role === "TECHNICIAN") filters.push(or(eq(maintenanceReminders.assignedToId, ctx.user.id), workspaceWide)!);
       const rows = filterRemindersForViewer(await db.select().from(maintenanceReminders).where(and(...filters)).orderBy(desc(maintenanceReminders.nextRunAt)), { role: ctx.user.role as "PROPERTY_MANAGER" | "TENANT" | "TECHNICIAN" | "FLAT_OWNER", organizationId: ctx.user.organizationId, unitId: ctx.user.unitId, userId: ctx.user.id });
       const acknowledgements = await db.select().from(reminderAcknowledgements).where(eq(reminderAcknowledgements.userId, ctx.user.id)).limit(1000);
       const acknowledgedIds = new Set(acknowledgements.map(item => item.reminderId));
@@ -306,7 +307,7 @@ export const appRouter = router({
     }),
   }),
   technician: router({
-    complete: technicianOnly.input(z.object({ ticketId: z.number().int().positive(), proofPhotoUrl: z.string().url(), resolutionNotes: z.string().min(5) })).mutation(async ({ ctx, input }) => {
+    complete: technicianOnly.input(z.object({ ticketId: z.number().int().positive(), proofPhotoUrl: z.string().url().or(z.string().regex(/^\/manus-storage\//, "Proof photo must use a storage URL")), resolutionNotes: z.string().min(5) })).mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database unavailable");
       const current = await db.select().from(tickets).where(and(eq(tickets.id, input.ticketId), eq(tickets.assignedToId, ctx.user.id))).limit(1);

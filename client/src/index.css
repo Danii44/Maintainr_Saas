@@ -66,6 +66,9 @@
   --maintainr-text: var(--maintainr-ink);
   --maintainr-text-muted: var(--maintainr-muted);
   --maintainr-text-on-accent: #ffffff;
+  --maintainr-active-card-start: #0b655f;
+  --maintainr-active-card-end: #123f3c;
+  --maintainr-active-card-muted: #d4eeea;
   --maintainr-focus: #0a8177;
   --primary: var(--maintainr-teal);
   --primary-foreground: #ffffff;
@@ -115,6 +118,9 @@
   --maintainr-text: var(--maintainr-ink);
   --maintainr-text-muted: var(--maintainr-muted);
   --maintainr-text-on-accent: #ffffff;
+  --maintainr-active-card-start: #0b655f;
+  --maintainr-active-card-end: #123f3c;
+  --maintainr-active-card-muted: #d4eeea;
   --maintainr-focus: #57cbbb;
   --background: var(--maintainr-canvas);
   --foreground: var(--maintainr-ink);
@@ -206,6 +212,25 @@ html:not(.dark) [class*="text-slate-300"] { color: var(--maintainr-ink) !importa
 html:not(.dark) [class*="text-slate-400"],
 html:not(.dark) [class*="text-slate-500"],
 html:not(.dark) [class*="text-slate-600"] { color: #46625e !important; }
+
+/* The Resident active-request card is an intentional dark operation surface.
+   It needs explicit accent-safe tokens instead of the light-workspace text bridge. */
+[class*="from-cyan-400"][class*="to-[#101521]"] {
+  border-color: color-mix(in srgb, var(--maintainr-sky) 42%, transparent) !important;
+  background: linear-gradient(135deg, var(--maintainr-active-card-start), var(--maintainr-active-card-end)) !important;
+  color: var(--maintainr-text-on-accent) !important;
+}
+[class*="from-cyan-400"][class*="to-[#101521]"] h2,
+[class*="from-cyan-400"][class*="to-[#101521]"] [class*="text-cyan-"],
+[class*="from-cyan-400"][class*="to-[#101521]"] [class*="text-slate-"] {
+  color: var(--maintainr-text-on-accent) !important;
+}
+[class*="from-cyan-400"][class*="to-[#101521]"] [class*="text-slate-"] {
+  color: var(--maintainr-active-card-muted) !important;
+}
+[class*="from-cyan-400"][class*="to-[#101521]"] [class*="bg-white/10"] {
+  background-color: color-mix(in srgb, var(--maintainr-text-on-accent) 32%, transparent) !important;
+}
 html:not(.dark) input,
 html:not(.dark) textarea,
 html:not(.dark) select,

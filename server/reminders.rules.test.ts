@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canAcknowledgeReminder, cronForReminder, isReminderOccurrenceDuplicate, nextReminderDate, shouldSendReminderChannel } from "../shared/reminderRules";
+import { canAcknowledgeReminder, cronForReminder, filterRemindersForViewer, isReminderOccurrenceDuplicate, nextReminderDate, shouldSendReminderChannel } from "../shared/reminderRules";
 
 describe("maintenance reminder rules", () => {
   const dueAt = new Date("2026-08-16T09:30:00.000Z");
@@ -35,6 +35,17 @@ describe("maintenance reminder rules", () => {
     expect(canAcknowledgeReminder({ ...base, role: "TENANT", actorUnitId: 99 })).toBe(false);
     expect(canAcknowledgeReminder({ ...base, role: "TECHNICIAN", actorId: 99 })).toBe(false);
     expect(canAcknowledgeReminder({ ...base, role: "PROPERTY_MANAGER", actorOrganizationId: 8 })).toBe(false);
+  });
+
+  it("shares intentionally workspace-wide reminders while retaining targeted role isolation", () => {
+    const workspaceWide = { organizationId: 4, unitId: null, assignedToId: null };
+    const tenantTargeted = { organizationId: 4, unitId: 12, assignedToId: null };
+    const technicianTargeted = { organizationId: 4, unitId: null, assignedToId: 7 };
+    const otherWorkspace = { organizationId: 5, unitId: null, assignedToId: null };
+    expect(filterRemindersForViewer([workspaceWide, tenantTargeted, technicianTargeted, otherWorkspace], { role: "TENANT", organizationId: 4, unitId: 12, userId: 8 })).toEqual([workspaceWide, tenantTargeted]);
+    expect(filterRemindersForViewer([workspaceWide, tenantTargeted, technicianTargeted, otherWorkspace], { role: "TECHNICIAN", organizationId: 4, unitId: null, userId: 7 })).toEqual([workspaceWide, technicianTargeted]);
+    expect(canAcknowledgeReminder({ role: "TENANT", actorId: 8, actorUnitId: 12, reminderOrganizationId: 4, actorOrganizationId: 4, reminderUnitId: null, assignedToId: null })).toBe(true);
+    expect(canAcknowledgeReminder({ role: "TECHNICIAN", actorId: 7, actorUnitId: null, reminderOrganizationId: 4, actorOrganizationId: 4, reminderUnitId: null, assignedToId: null })).toBe(true);
   });
 
   it("advances recurring reminders without mutating the source date", () => {

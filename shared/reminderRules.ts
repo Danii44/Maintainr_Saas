@@ -12,7 +12,12 @@ export function nextReminderDate(cadence: ReminderCadence, from: Date) {
 export type ReminderScopeRow = { organizationId: number; unitId: number | null; assignedToId: number | null };
 
 export function filterRemindersForViewer<T extends ReminderScopeRow>(rows: T[], input: { role: "PROPERTY_MANAGER" | "TENANT" | "TECHNICIAN" | "FLAT_OWNER"; organizationId: number; unitId: number | null; userId: number }) {
-  return rows.filter(row => row.organizationId === input.organizationId && (input.role === "PROPERTY_MANAGER" || (input.role === "TECHNICIAN" ? row.assignedToId === input.userId : row.unitId !== null && row.unitId === input.unitId)));
+  return rows.filter(row => {
+    if (row.organizationId !== input.organizationId || input.role === "PROPERTY_MANAGER") return row.organizationId === input.organizationId;
+    const workspaceWide = row.unitId === null && row.assignedToId === null;
+    if (workspaceWide) return true;
+    return input.role === "TECHNICIAN" ? row.assignedToId === input.userId : row.unitId !== null && row.unitId === input.unitId;
+  });
 }
 
 export function shouldSendReminderChannel(channel: "email" | "sms", settings: { emailNotificationsEnabled?: boolean; smsNotificationsEnabled?: boolean } | null | undefined) {
@@ -26,6 +31,8 @@ export function isReminderOccurrenceDuplicate(existingOccurrence: Date | null | 
 export function canAcknowledgeReminder(input: { role: "PROPERTY_MANAGER" | "TENANT" | "TECHNICIAN" | "FLAT_OWNER"; actorId: number; actorUnitId: number | null; reminderOrganizationId: number; actorOrganizationId: number | null; reminderUnitId: number | null; assignedToId: number | null }) {
   if (input.actorOrganizationId !== input.reminderOrganizationId) return false;
   if (input.role === "PROPERTY_MANAGER") return true;
+  const workspaceWide = input.reminderUnitId === null && input.assignedToId === null;
+  if (workspaceWide) return true;
   if (input.role === "TECHNICIAN") return input.assignedToId === input.actorId;
   return input.reminderUnitId !== null && input.reminderUnitId === input.actorUnitId;
 }
