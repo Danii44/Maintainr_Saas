@@ -1,60 +1,90 @@
 # Maintainr SaaS
 
-Maintainr is a bilingual property-maintenance operations platform for property managers, tenants, field technicians, and flat owners. It connects maintenance requests, assignments, updates, proof of completion, reminders, onboarding, and audit history in one role-aware workspace.
+Maintainr SaaS is the production-ready, bilingual property-maintenance application. It provides private, organization-scoped workspaces for Property Managers, Tenants, Technicians, and Flat Owners. It is independent from the public marketing and demo product in `Danii44/Maintainr_commercial`.
 
-> This repository is the **sellable production SaaS application**. It contains real customer workspaces and does not contain the public marketing-site quotation database or browser demo. Those belong to [`Danii44/Maintainr_commercial`](https://github.com/Danii44/Maintainr_commercial).
+> **Database boundary:** This application uses its own PostgreSQL database through `DATABASE_URL`. Never connect it to the commercial quotation/demo database and never place database credentials in frontend variables.
 
-## Product model
+## How the product works
 
-Maintainr uses one secure email/password sign-in for every user. After authentication, the account role determines the destination automatically:
+A Property Manager creates a secure workspace and becomes its first Manager. The Manager configures the organization name, Arabic name, logo, colors, property list, and units. Tenants and Technicians either receive a Manager-approved invitation or use the public application path. Each user creates a private password and is routed automatically to the portal that matches the stored role.
 
-| Role | Portal | Primary responsibility |
-|---|---|---|
-| Property Manager | `/manager` | Manage people, requests, assignments, priorities, reminders, applications, and workspace identity |
-| Tenant | `/tenant` | Report maintenance issues, attach evidence, and follow progress |
-| Technician | `/technician` | Review assigned jobs, start work, upload proof, and submit completion notes |
-| Flat Owner | `/owner` | Review scoped maintenance performance and export a report |
+| Step | Operational flow |
+|---:|---|
+| 1 | A Manager creates a workspace at `/create-workspace` and is routed to `/manager`. |
+| 2 | The Manager adds properties, units, users, assignments, branding, and reminders. |
+| 3 | A Tenant reports an issue at `/tenant`, with optional media evidence. |
+| 4 | The Manager reviews the request, sets priority, assigns a Technician, and sees the audit record. |
+| 5 | The Technician works the assigned request at `/technician`, uploads proof, and submits completion notes. A ticket cannot be resolved without both. |
+| 6 | The Tenant follows the request; the Flat Owner at `/owner` sees only unit-scoped performance and activity. |
+| 7 | Managers create and edit reminders; workspace-wide reminders are visible and acknowledgeable by all roles, while unit and technician reminders remain isolated. |
 
-Prospective tenants and technicians apply through `/apply`. A Manager reviews each application and sends a single-use invitation so the applicant creates a private password. Users never share a role password.
+## Required services
 
-## Independent architecture
+| Service | Required | Purpose |
+|---|---:|---|
+| Node.js 20+ and pnpm | Yes | Local development, checks, tests, and builds. |
+| PostgreSQL or Supabase PostgreSQL | Yes | Organizations, users, sessions, tickets, reminders, audit data, and settings. |
+| Netlify | Optional host | Static frontend and server functions for a Netlify deployment. |
+| S3-compatible storage | Optional | Ticket evidence and technician proof files. |
+| Resend | Optional | Transactional email notifications. |
+| Twilio | Optional | SMS notifications; leave disabled until independently tested. |
 
-Maintainr is designed for independent deployment. The production stack is React, Express, tRPC, Drizzle ORM, PostgreSQL, Netlify Functions, and S3-compatible object storage. Authentication is self-hosted with scrypt password hashing and revocable PostgreSQL-backed sessions. Supabase is supported as the PostgreSQL provider; Supabase Auth is not required.
+## Install the database
 
-Notifications use Resend for email and Twilio for optional SMS. Reminder execution uses the portable Netlify Scheduled Function and a callback secret. Provider credentials remain server-side and are never entered into the application UI.
+Create a new, empty PostgreSQL database owned by your organization. Import the baseline first, then the operational expansion:
 
-## Installation and deployment
+```bash
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f POSTGRESQL_SCHEMA.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f MAINTAINR_SAAS_SCHEMA.sql
+```
 
-Read [MAINTAINR_INSTALLATION_GUIDE.md](./MAINTAINR_INSTALLATION_GUIDE.md) for the complete production procedure. The provider-specific walkthrough is [SUPABASE_NETLIFY_DEMO.md](./SUPABASE_NETLIFY_DEMO.md). The canonical PostgreSQL definition is [POSTGRESQL_SCHEMA.sql](./POSTGRESQL_SCHEMA.sql).
+`POSTGRESQL_SCHEMA.sql` is the canonical full baseline. `MAINTAINR_SAAS_SCHEMA.sql` is a required additive, idempotent expansion for conversations, notifications, calendar data, evidence metadata, and related operational features. Do **not** import `DEMO_ACCOUNTS_SEED.sql` or `REMOVE_DEMO_DATA_KEEP_LOGINS.sql` into a customer database; they are isolated QA utilities only.
 
-At minimum, create a PostgreSQL database, apply the schema, connect the repository to Netlify, configure the server-side environment variables, and verify `/api/health` and `/api/health/database`. Use the Netlify build command `pnpm build:netlify` with `dist/public` as the publish directory.
+## Configure secrets safely
 
-## First-run organization identity
+Copy `.env.example` locally for reference and set real values only in the deployment provider's server-side secret manager. Do not commit a populated `.env` file.
 
-After the first Manager account signs in, open **Workspace settings** and save the organization’s English name, Arabic name, logo URL, primary color, and accent color. Maintainr stores this identity in PostgreSQL and applies it automatically to the public Home, sign-in screen, every portal, page title, theme variables, and browser favicon. The default favicon is used until a logo is saved.
+| Variable group | Required use |
+|---|---|
+| `DATABASE_URL`, `JWT_SECRET`, `AUTH_BASE_URL` | Required for a secure independent deployment. |
+| `BOOTSTRAP_MANAGER_EMAIL` | Optional legacy bootstrap compatibility; new workspaces use `/create-workspace`. |
+| `RESEND_API_KEY`, `NOTIFICATION_FROM_EMAIL` | Required only when email notifications are enabled. |
+| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` | Required only when SMS is intentionally enabled. |
+| `S3_BUCKET`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_ENDPOINT` | Required only when durable customer media storage is enabled. |
+| `REMINDER_CALLBACK_SECRET` | Required when reminder scheduling is enabled. |
 
-The first-run form is intended for organization setup, not provider secrets. Keep Resend, Twilio, PostgreSQL, S3, and callback credentials in the deployment secret manager.
+Keep email and SMS disabled in Workspace Settings until provider configuration is complete and a controlled test succeeds. The in-product workspace setup contains organization identity and notification toggles only; it never accepts provider secrets.
 
-## Local development
+## Local commands
 
 ```bash
 pnpm install
 pnpm check
 pnpm test
 pnpm build
+pnpm build:netlify
 pnpm dev
 ```
 
-Create local environment values from the blank reference templates. Never commit `.env` files or real credentials. Use `DEMO_ACCOUNTS_SEED.sql` only in a disposable QA database; use `REMOVE_DEMO_DATA_KEEP_LOGINS.sql` when you need to remove seeded operational records while preserving the four test login rows.
+The normal build publishes `dist/public`. For Netlify, use `pnpm build:netlify` and the repository's `netlify.toml`. This repository is source-only: no deployment occurs from these commands without a user-controlled host action.
 
-## Release verification
+## First-run checklist
 
-Before publishing, verify the public Home and sign-in flow, Manager approval and invitation flow, Tenant request creation and attachments, Technician assignment and completion proof, Flat Owner reporting, reminders, password reset, profile updates, branding propagation, Arabic RTL layout, mobile navigation, database health, and Netlify scheduled callbacks. Review [RELEASE_VERIFICATION.md](./RELEASE_VERIFICATION.md) and the generated installation guide PDF before the final release.
+After the first Manager signs in, save the English and Arabic organization names, logo URL, primary color, and accent color. Create a property and units, then add or invite one user for each role. Test sign-in, invitation activation, password reset, tenant reporting with media, Manager assignment, Technician completion proof, Owner scoping, reminders, messages, calendar, Arabic RTL, and a mobile viewport before production use.
 
-## Security boundaries
+## Security requirements
 
-Use HTTPS everywhere, rotate any credential that has appeared outside the secret manager, restrict S3 permissions, enable PostgreSQL backups, and keep the bootstrap Manager email controlled by the deployment owner. Branding writes and operational administration are Manager-only; role portals receive only the organization data required to render the workspace.
+Use HTTPS, rotate exposed credentials, enable PostgreSQL backups, restrict S3 to the smallest required permission set, and use a least-privilege database account. Password hashes are never returned from authenticated public API routes. Sessions are server-side and revocable. Workspace data is scoped by organization, and role procedures enforce the permitted action and record visibility.
 
-## Commercial-site handoff
+## Kept project structure
 
-The separate commercial website can link visitors to this app’s `/create-workspace` and `/sign-in` routes through a public `SAAS_APP_URL` value. This SaaS deployment must not receive commercial quotation credentials, demo database URLs, public demo cookies, or any customer data from the marketing site. See [COMMERCIAL_HANDOFF.md](./COMMERCIAL_HANDOFF.md) for the boundary.
+| Path | Why it remains |
+|---|---|
+| `client/`, `server/`, `shared/` | Application interface, API, authentication, and shared permission rules. |
+| `drizzle/` | PostgreSQL schema and migration tooling. |
+| `netlify/` | Netlify function entrypoints. |
+| `scripts/` | QA-safe, schema, and release verification utilities. |
+| `tests/`, `server/*.test.ts` | Regression coverage for security, roles, and workflows. |
+| `.env.example`, SQL files, `netlify.toml`, package/config files | Installation, deployment, and build contracts. |
+
+No credentials, generated output, runtime logs, or duplicate documentation files are kept in the repository.
