@@ -97,6 +97,20 @@ function AppShell({ role, children }: { role: Role; children: React.ReactNode })
     favicon.href = brandLogo || "/favicon.svg";
   }, [brandName, brandLogo, primaryColor, settings.data?.accentColor]);
 
+  useEffect(() => {
+    const openTicketsWorkspace = (event: MouseEvent) => {
+      if (role !== "PROPERTY_MANAGER") return;
+      const trigger = event.target instanceof Element ? event.target.closest<HTMLButtonElement>("button") : null;
+      const label = trigger?.textContent?.trim() ?? "";
+      if (!trigger || (!label.includes("View tickets") && !label.includes("عرض البلاغات"))) return;
+      event.preventDefault();
+      event.stopPropagation();
+      navigate("/manager?view=tickets");
+    };
+    document.addEventListener("click", openTicketsWorkspace, true);
+    return () => document.removeEventListener("click", openTicketsWorkspace, true);
+  }, [navigate, role]);
+
   return <div className="min-h-screen bg-[#080b12] text-slate-100">
     <aside className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col overflow-y-auto overscroll-contain border-r border-white/[.07] bg-[#0b0f18] p-5 transition-transform lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
       <div className="flex items-center justify-between"><Link href="/" className="flex min-w-0 items-center gap-3">{brandLogo ? <img src={brandLogo} alt={brandName} className="size-10 rounded-2xl object-cover"/> : <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-teal-600 text-white shadow-lg shadow-teal-600/20"><Wrench size={20}/></span>}<span className="min-w-0"><span className="block truncate font-semibold tracking-tight">{brandName}</span><span className="block text-[10px] uppercase tracking-[.22em] text-slate-500">{t("Operations workspace", "مساحة العمليات")}</span></span></Link><button className="text-slate-500 lg:hidden" onClick={() => setOpen(false)} aria-label={t("Close navigation", "إغلاق التنقل")}><X size={18}/></button></div>

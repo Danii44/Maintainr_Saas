@@ -95,6 +95,8 @@ describe("Maintainr dashboard composition", () => {
 
     expect(app).toContain('href="/manager?view=tickets"');
     expect(app).toContain('t("Assign", "تعيين")');
+    expect(app).toContain('navigate("/manager?view=tickets")');
+    expect(app).toContain('openTicketsWorkspace');
     expect(overlay).toContain('"tickets"');
     expect(overlay).toContain("function TicketsPanel");
     expect(overlay).toContain("Daily overview stays clear");

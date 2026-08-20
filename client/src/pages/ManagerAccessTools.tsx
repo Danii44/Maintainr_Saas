@@ -9,6 +9,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 
 export function ManagerAccessTools() {
   const { t } = useLanguage();
+  const isPeopleRoute = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("view") === "people";
   const [email, setEmail] = useState("");
   const [propertyId, setPropertyId] = useState("");
   const [unitNumber, setUnitNumber] = useState("");
@@ -21,6 +22,8 @@ export function ManagerAccessTools() {
   const units = trpc.manager.listUnits.useQuery();
   const createUnit = trpc.manager.createUnit.useMutation();
   const createOwner = trpc.manager.createOwner.useMutation();
+
+  if (!isPeopleRoute) return null;
 
   const submitUnit = async (event: React.FormEvent) => {
     event.preventDefault();
