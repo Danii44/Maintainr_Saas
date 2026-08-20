@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
-import { BarChart3, CalendarDays, CheckCircle2, CircleHelp, Clock3, MessageSquare, Plus, SendHorizontal, Users } from "lucide-react";
+import { BarChart3, CalendarDays, CheckCircle2, CircleHelp, Clock3, MessageSquare, Pencil, Plus, SendHorizontal, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,9 +12,9 @@ import { useLanguage } from "./contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 
 type PortalRole = "PROPERTY_MANAGER" | "TENANT" | "TECHNICIAN" | "FLAT_OWNER";
-type WorkspaceView = "analytics" | "messages" | "calendar" | "inquiries";
+type WorkspaceView = "analytics" | "messages" | "calendar" | "inquiries" | "reminders";
 
-const supportedViews = new Set<WorkspaceView>(["analytics", "messages", "calendar", "inquiries"]);
+const supportedViews = new Set<WorkspaceView>(["analytics", "messages", "calendar", "inquiries", "reminders"]);
 
 function PanelHeading({ icon: Icon, eyebrow, title, description, action }: { icon: typeof BarChart3; eyebrow: string; title: string; description: string; action?: React.ReactNode }) {
   return <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[.2em] text-teal-700"><Icon size={15}/>{eyebrow}</div><h1 className="mt-2 text-3xl font-semibold tracking-[-.04em] text-slate-900 sm:text-4xl">{title}</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">{description}</p></div>{action}</div>;
@@ -106,6 +106,44 @@ function InquiriesPanel({ role }: { role: PortalRole }) {
   </>;
 }
 
+function localDateTime(value: Date | string) {
+  const date = new Date(value);
+  const offset = date.getTimezoneOffset() * 60_000;
+  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+}
+
+function RemindersPanel() {
+  const { t } = useLanguage();
+  const reminders = trpc.reminders.list.useQuery(undefined, { retry: false });
+  const updateReminder = trpc.reminders.update.useMutation();
+  const removeReminder = trpc.reminders.remove.useMutation();
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [draft, setDraft] = useState({ title: "", description: "", cadence: "MONTHLY" as "ONCE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY", dueAt: "", isActive: true });
+  const items = reminders.data ?? [];
+
+  const beginEdit = (reminder: typeof items[number]) => {
+    setEditingId(reminder.id);
+    setDraft({ title: reminder.title, description: reminder.description, cadence: reminder.cadence, dueAt: localDateTime(reminder.nextRunAt), isActive: reminder.isActive });
+  };
+
+  const save = async () => {
+    if (!editingId || draft.title.trim().length < 3 || draft.description.trim().length < 3 || !draft.dueAt) return;
+    try {
+      await updateReminder.mutateAsync({ id: editingId, title: draft.title.trim(), description: draft.description.trim(), cadence: draft.cadence, dueAt: new Date(draft.dueAt).toISOString(), isActive: draft.isActive });
+      await reminders.refetch();
+      setEditingId(null);
+      toast.success(t("Reminder updated", "تم تحديث التذكير"));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("Unable to update reminder", "تعذر تحديث التذكير"));
+    }
+  };
+
+  return <>
+    <PanelHeading icon={Clock3} eyebrow={t("Maintenance reminders", "تذكيرات الصيانة")} title={t("Keep planned work accurate.", "حافظ على دقة الأعمال المخططة.")} description={t("Review, edit, pause, or remove reminders while preserving the role-aware workspace record.", "راجع التذكيرات أو عدلها أو أوقفها أو أزلها مع الحفاظ على سجل مساحة العمل حسب الدور.")} />
+    <Card className="border-[#dce9e6] bg-white"><CardHeader><CardTitle className="text-base text-slate-900">{t("Scheduled reminders", "التذكيرات المجدولة")}</CardTitle></CardHeader><CardContent className="space-y-3">{reminders.isLoading ? <p className="text-sm text-slate-400">{t("Loading reminders…", "جارٍ تحميل التذكيرات…")}</p> : items.length ? items.map((reminder) => <div key={reminder.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">{editingId === reminder.id ? <div className="space-y-3"><Input value={draft.title} onChange={(event) => setDraft({ ...draft, title: event.target.value })} className="border-slate-200 bg-white text-slate-900" aria-label={t("Reminder title", "عنوان التذكير")}/><Textarea value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} className="min-h-24 border-slate-200 bg-white text-slate-900" aria-label={t("Reminder description", "وصف التذكير")}/><div className="grid gap-3 sm:grid-cols-2"><Select value={draft.cadence} onValueChange={(value) => setDraft({ ...draft, cadence: value as typeof draft.cadence })}><SelectTrigger className="border-slate-200 bg-white text-slate-900"><SelectValue/></SelectTrigger><SelectContent>{(["ONCE", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"] as const).map((cadence) => <SelectItem key={cadence} value={cadence}>{cadence}</SelectItem>)}</SelectContent></Select><Input type="datetime-local" value={draft.dueAt} onChange={(event) => setDraft({ ...draft, dueAt: event.target.value })} className="border-slate-200 bg-white text-slate-900"/></div><label className="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" checked={draft.isActive} onChange={(event) => setDraft({ ...draft, isActive: event.target.checked })}/>{t("Reminder is active", "التذكير نشط")}</label><div className="flex flex-wrap gap-2"><Button size="sm" className="bg-teal-700 hover:bg-teal-800" disabled={updateReminder.isPending || draft.title.trim().length < 3 || draft.description.trim().length < 3 || !draft.dueAt} onClick={save}>{t("Save changes", "حفظ التغييرات")}</Button><Button size="sm" variant="outline" className="border-slate-200 bg-white text-slate-700" onClick={() => setEditingId(null)}><X size={15}/>{t("Cancel", "إلغاء")}</Button></div></div> : <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><div className="text-sm font-semibold text-slate-900">{reminder.title}</div><p className="mt-1 text-sm leading-6 text-slate-500">{reminder.description}</p><div className="mt-3 text-xs font-medium text-teal-700">{reminder.cadence} · {new Date(reminder.nextRunAt).toLocaleString()} · {reminder.isActive ? t("Active", "نشط") : t("Paused", "متوقف")}</div></div><div className="flex gap-2"><Button size="sm" variant="outline" className="border-slate-200 bg-white text-slate-700" onClick={() => beginEdit(reminder)}><Pencil size={15}/>{t("Edit", "تعديل")}</Button><Button size="sm" variant="outline" className="border-rose-200 bg-white text-rose-700" disabled={removeReminder.isPending} onClick={async () => { try { await removeReminder.mutateAsync({ id: reminder.id }); await reminders.refetch(); toast.success(t("Reminder removed", "تمت إزالة التذكير")); } catch (error) { toast.error(error instanceof Error ? error.message : t("Unable to remove reminder", "تعذر إزالة التذكير")); } }}>{t("Remove", "إزالة")}</Button></div></div>}</div>) : <div className="rounded-2xl border border-dashed border-slate-200 p-10 text-center text-sm text-slate-400">{t("No reminders scheduled yet.", "لا توجد تذكيرات مجدولة بعد.")}</div>}</CardContent></Card>
+  </>;
+}
+
 export function OperationsOverlay() {
   const { user } = useAuth();
   const [pathname] = useLocation();
@@ -121,6 +159,7 @@ export function OperationsOverlay() {
   if (!user || !view || !supportedViews.has(view)) return null;
   const role = user.role as PortalRole;
   if (view === "analytics" && role !== "PROPERTY_MANAGER") return null;
+  if (view === "reminders" && role !== "PROPERTY_MANAGER") return null;
   if (view === "inquiries" && role === "TECHNICIAN") return null;
-  return <section className="fixed inset-x-0 bottom-0 top-20 z-20 overflow-y-auto bg-[#f4f8f7] px-5 py-7 text-slate-900 lg:left-72 lg:px-10 lg:py-10"><div className="mx-auto max-w-7xl">{view === "analytics" ? <AnalyticsPanel role={role}/> : view === "messages" ? <MessagesPanel/> : view === "calendar" ? <CalendarPanel role={role}/> : <InquiriesPanel role={role}/>}</div></section>;
+  return <section className="fixed inset-x-0 bottom-0 top-20 z-20 overflow-y-auto bg-[#f4f8f7] px-5 py-7 text-slate-900 lg:left-72 lg:px-10 lg:py-10"><div className="mx-auto max-w-7xl">{view === "analytics" ? <AnalyticsPanel role={role}/> : view === "messages" ? <MessagesPanel/> : view === "calendar" ? <CalendarPanel role={role}/> : view === "reminders" ? <RemindersPanel/> : <InquiriesPanel role={role}/>}</div></section>;
 }

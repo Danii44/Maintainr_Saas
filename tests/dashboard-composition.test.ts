@@ -37,4 +37,14 @@ describe("Maintainr dashboard composition", () => {
     expect(styles).toContain("Stronger form and table affordances");
     expect(styles).toContain("aside.fixed.inset-y-0 .text-slate-300");
   });
+
+  it("keeps Manager reminder editing behind the protected operations overlay", async () => {
+    const overlay = await readFile(new URL("client/src/operationsOverlay.tsx", root), "utf8");
+
+    expect(overlay).toContain('"reminders"');
+    expect(overlay).toContain("function RemindersPanel");
+    expect(overlay).toContain("trpc.reminders.update.useMutation");
+    expect(overlay).toContain('view === "reminders" && role !== "PROPERTY_MANAGER"');
+    expect(overlay).toContain('t("Save changes", "حفظ التغييرات")');
+  });
 });
