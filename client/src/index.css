@@ -68,6 +68,9 @@
   --maintainr-text-on-accent: #ffffff;
   --maintainr-text-on-dark: #ffffff;
   --maintainr-text-on-dark-muted: #d3e5e0;
+  --maintainr-field: #ffffff;
+  --maintainr-field-border: #c5d7d2;
+  --maintainr-placeholder: #718582;
   --maintainr-active-card-start: #0b655f;
   --maintainr-active-card-end: #123f3c;
   --maintainr-active-card-muted: #d4eeea;
@@ -120,6 +123,9 @@
   --maintainr-text: var(--maintainr-ink);
   --maintainr-text-muted: var(--maintainr-muted);
   --maintainr-text-on-accent: #ffffff;
+  --maintainr-field: #102422;
+  --maintainr-field-border: #38544f;
+  --maintainr-placeholder: #a8c3bd;
   --maintainr-active-card-start: #0b655f;
   --maintainr-active-card-end: #123f3c;
   --maintainr-active-card-muted: #d4eeea;
@@ -172,6 +178,7 @@
 }
 
 html, body, #root { width: 100%; max-width: 100%; min-height: 100%; overflow-x: hidden; }
+body { min-height: 100dvh; overflow-y: auto; }
 button, a, input, textarea, select { transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
 button:active:not(:disabled), [role="button"]:active:not([aria-disabled="true"]) { transform: scale(.98); }
 
@@ -237,9 +244,9 @@ html:not(.dark) input,
 html:not(.dark) textarea,
 html:not(.dark) select,
 html:not(.dark) [role="combobox"] {
-  background: #ffffff !important;
+  background: var(--maintainr-field) !important;
   color: var(--maintainr-ink) !important;
-  border-color: #c5d7d2 !important;
+  border-color: var(--maintainr-field-border) !important;
   box-shadow: inset 0 1px 1px rgba(15, 54, 49, .025);
 }
 html:not(.dark) input:focus,
@@ -255,9 +262,12 @@ aside.fixed.inset-y-0 {
 }
 aside.fixed.inset-y-0 .text-slate-300,
 aside.fixed.inset-y-0 .text-slate-400 { color: var(--maintainr-text-on-dark-muted) !important; }
+aside.fixed.inset-y-0 .text-slate-100,
+aside.fixed.inset-y-0 .text-slate-200 { color: var(--maintainr-text-on-dark) !important; }
 aside.fixed.inset-y-0 .text-slate-500,
 aside.fixed.inset-y-0 .text-slate-600 { color: color-mix(in srgb, var(--maintainr-text-on-dark-muted) 88%, var(--maintainr-text-on-dark)) !important; }
 aside.fixed.inset-y-0 .text-white { color: var(--maintainr-text-on-dark) !important; }
+aside.fixed.inset-y-0 [class*="text-teal-300"] { color: #a8e8dd !important; }
 aside.fixed.inset-y-0 > div:first-child > div:nth-child(2),
 aside.fixed.inset-y-0 > div:last-child > a {
   border-color: rgba(219, 247, 240, .14) !important;
@@ -310,7 +320,7 @@ main.lg\:pl-72 > div > .mb-8 {
 }
 main.lg\:pl-72 > div > .mb-8 h1 {
   color: var(--maintainr-ink) !important;
-  font-size: clamp(1.75rem, 2.6vw, 2.55rem);
+  font-size: clamp(1.5rem, 2vw, 1.95rem);
   font-weight: 780;
   letter-spacing: -.055em;
   line-height: 1.08;
@@ -395,7 +405,7 @@ main.lg\:pl-72 textarea,
 main.lg\:pl-72 [role="combobox"] { min-height: 2.7rem; border-radius: .72rem; }
 main.lg\:pl-72 textarea { min-height: 7.4rem; }
 html:not(.dark) main.lg\:pl-72 input::placeholder,
-html:not(.dark) main.lg\:pl-72 textarea::placeholder { color: #81928f !important; }
+html:not(.dark) main.lg\:pl-72 textarea::placeholder { color: var(--maintainr-placeholder) !important; }
 html:not(.dark) main.lg\:pl-72 [class*="border-dashed"] { background: #f8fcfa !important; border-color: #aacbc4 !important; }
 
 /* Optional dark mode is redesigned, not a legacy dark fallback. */
@@ -420,7 +430,47 @@ html:not(.dark) main.lg\:pl-72 [class*="border-dashed"] { background: #f8fcfa !i
 .dark main.lg\:pl-72 [class*="text-slate-600"] { color: var(--maintainr-muted) !important; }
 .dark main.lg\:pl-72 input,
 .dark main.lg\:pl-72 textarea,
-.dark main.lg\:pl-72 [role="combobox"] { background: #102422 !important; color: #eaf7f3 !important; border-color: #38544f !important; }
+.dark main.lg\:pl-72 [role="combobox"] { background: var(--maintainr-field) !important; color: #eaf7f3 !important; border-color: var(--maintainr-field-border) !important; }
+.dark main.lg\:pl-72 :is(input, textarea)::placeholder { color: var(--maintainr-placeholder) !important; }
+.dark main.lg\:pl-72 [class*="text-slate-100"],
+.dark main.lg\:pl-72 [class*="text-slate-200"] { color: var(--maintainr-text-on-dark) !important; }
+.dark main.lg\:pl-72 button[class*="bg-violet"],
+.dark main.lg\:pl-72 button[class*="bg-cyan"] { color: #ffffff !important; }
+
+/* Dashboard navigation and the query-driven operational workspace each own a
+   safe vertical scroll region. This keeps the mobile rail, long panels, and
+   the fixed theme control reachable without trapping the page behind a panel. */
+aside.fixed.inset-y-0 { scrollbar-gutter: stable; }
+.maintainr-operations-overlay { -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+.dark .maintainr-operations-overlay { background: var(--maintainr-canvas) !important; color: var(--maintainr-text) !important; }
+.dark .maintainr-operations-overlay [class*="bg-white"],
+.dark .maintainr-operations-overlay [class*="bg-slate-50"] { background: var(--maintainr-panel) !important; border-color: var(--maintainr-line) !important; }
+.dark .maintainr-operations-overlay [class*="text-slate-900"],
+.dark .maintainr-operations-overlay [class*="text-slate-800"] { color: var(--maintainr-text) !important; }
+.dark .maintainr-operations-overlay [class*="text-slate-400"],
+.dark .maintainr-operations-overlay [class*="text-slate-500"],
+.dark .maintainr-operations-overlay [class*="text-slate-700"] { color: var(--maintainr-text-muted) !important; }
+.dark .maintainr-operations-overlay :is(input, textarea, [role="combobox"]) { background: var(--maintainr-field) !important; color: var(--maintainr-text) !important; border-color: var(--maintainr-field-border) !important; }
+
+/* Intentional dark operational panels opt out of the general light-page
+   foreground bridge. This preserves a clear hierarchy for Manager analytics. */
+.maintainr-next-focus { color: var(--maintainr-text-on-dark) !important; }
+.maintainr-next-focus :is(h1, h2, h3, h4, strong, p, [class*="text-"]) { color: var(--maintainr-text-on-dark) !important; }
+.maintainr-next-focus [class*="text-teal-"] { color: #c9fff5 !important; }
+
+/* Home hero evidence: the operational signal badge and the supporting copy in
+   the workspace preview remain intentionally legible at their compact sizes.
+   These scoped bridges prevent the original dark-theme utility shades from
+   becoming faint after the preview is translated into a light surface. */
+html:not(.dark) [class*="bg-teal-400/10"][class*="text-teal-200"] {
+  background: var(--maintainr-soft-teal) !important;
+  border-color: rgba(8, 124, 115, .28) !important;
+  color: #075d57 !important;
+  box-shadow: 0 4px 12px rgba(8, 124, 115, .08);
+}
+html:not(.dark) [class*="bg-[#101521]"] [class*="text-slate-500"] { color: #405b57 !important; }
+.dark [class*="bg-teal-400/10"][class*="text-teal-200"] { color: #c4fff3 !important; border-color: rgba(143, 229, 215, .28) !important; }
+.dark [class*="bg-[#101521]"] [class*="text-slate-500"] { color: #c0d8d2 !important; }
 .dark #ticket-operations > div:first-child { background: linear-gradient(90deg, #17312f, #132b2a) !important; border-color: var(--maintainr-line) !important; }
 
 @media (max-width: 1023px) {
