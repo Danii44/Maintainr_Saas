@@ -255,6 +255,21 @@ export const developerSettings = pgTable("developerSettings", {
   updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const userNotifications = pgTable("userNotifications", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organizationId").notNull(),
+  userId: integer("userId").notNull(),
+  type: varchar("type", { length: 48 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  body: text("body"),
+  href: varchar("href", { length: 512 }),
+  readAt: timestamp("readAt", { withTimezone: true }),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  userUnreadIdx: index("user_notifications_user_unread_idx").on(table.userId, table.readAt, table.createdAt),
+  organizationCreatedIdx: index("user_notifications_org_created_idx").on(table.organizationId, table.createdAt),
+}));
+
 export const ticketLogs = pgTable("ticketLogs", {
   id: serial("id").primaryKey(),
   ticketId: integer("ticketId").notNull(),

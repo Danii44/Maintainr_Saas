@@ -8,8 +8,8 @@ import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import { acceptInvitation, approveApplication, listApplications, rejectApplication, submitRoleApplication } from "./invitations";
-import { developerSettings, evidenceAssets, maintenanceReminders, organizations, properties, reminderAcknowledgements, reminderRuns, roleApplications, ticketLogs, ticketMedia, tickets, units, users } from "../drizzle/schema";
-import { sendTicketEmail } from "./notifications";
+import { developerSettings, evidenceAssets, maintenanceReminders, organizations, properties, reminderAcknowledgements, reminderRuns, roleApplications, ticketLogs, ticketMedia, tickets, units, userNotifications, users } from "../drizzle/schema";
+import { sendTicketEmail, sendTicketSms } from "./notifications";
 import { storagePut } from "./storage";
 import { operationsRouter } from "./operations";
 import { canMutateManagerTicket } from "../shared/managerActionRules";
@@ -34,6 +34,31 @@ function toPublicUser<T extends { passwordHash?: unknown } | null>(user: T) {
   if (!user) return null;
   const { passwordHash: _passwordHash, ...publicUser } = user;
   return publicUser;
+}
+
+type TicketEvent = "TICKET_CREATED" | "TICKET_ASSIGNED" | "STATUS_CHANGED" | "TICKET_RESOLVED";
+
+async function publishTicketNotifications(input: { event: TicketEvent; organizationId: number; actorId: number; recipientIds: number[]; title: string; body: string; href: string }) {
+  const db = await getDb();
+  if (!db) return;
+  const recipientIdSet = new Set(input.recipientIds.filter((id) => Number.isInteger(id) && id > 0 && id !== input.actorId));
+  if (!recipientIdSet.size) return;
+  const members = await db.select({ id: users.id, email: users.email, phone: users.phone }).from(users).where(eq(users.organizationId, input.organizationId));
+  const recipients = Array.isArray(members) ? members.filter((member) => recipientIdSet.has(member.id)) : [];
+  if (!recipients.length) return;
+  await db.insert(userNotifications).values(recipients.map((recipient) => ({ organizationId: input.organizationId, userId: recipient.id, type: input.event, title: input.title, body: input.body, href: input.href })));
+  const settings = (await db.select({ emailNotificationsEnabled: developerSettings.emailNotificationsEnabled, smsNotificationsEnabled: developerSettings.smsNotificationsEnabled }).from(developerSettings).where(eq(developerSettings.organizationId, input.organizationId)).limit(1))[0];
+  await Promise.allSettled(recipients.flatMap((recipient) => [
+    ...(settings?.emailNotificationsEnabled ? [sendTicketEmail({ event: input.event, recipientEmail: recipient.email, subject: input.title, text: input.body })] : []),
+    ...(settings?.smsNotificationsEnabled ? [sendTicketSms({ recipientPhone: recipient.phone, text: `${input.title}: ${input.body}` })] : []),
+  ]));
+}
+
+async function managerIdsForOrganization(organizationId: number) {
+  const db = await getDb();
+  if (!db) return [] as number[];
+  const managers = await db.select({ id: users.id }).from(users).where(and(eq(users.organizationId, organizationId), eq(users.role, "PROPERTY_MANAGER")));
+  return Array.isArray(managers) ? managers.map((manager) => manager.id) : [];
 }
 
 export const appRouter = router({
@@ -222,6 +247,25 @@ export const appRouter = router({
       return { success: true };
     }),
   }),
+  notifications: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db || !ctx.user.organizationId) return [];
+      return db.select().from(userNotifications).where(and(eq(userNotifications.organizationId, ctx.user.organizationId), eq(userNotifications.userId, ctx.user.id))).orderBy(desc(userNotifications.createdAt)).limit(30);
+    }),
+    markRead: protectedProcedure.input(z.object({ notificationId: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db || !ctx.user.organizationId) throw new Error(reminderError("database"));
+      await db.update(userNotifications).set({ readAt: new Date() }).where(and(eq(userNotifications.id, input.notificationId), eq(userNotifications.organizationId, ctx.user.organizationId), eq(userNotifications.userId, ctx.user.id)));
+      return { success: true };
+    }),
+    markAllRead: protectedProcedure.mutation(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db || !ctx.user.organizationId) throw new Error(reminderError("database"));
+      await db.update(userNotifications).set({ readAt: new Date() }).where(and(eq(userNotifications.organizationId, ctx.user.organizationId), eq(userNotifications.userId, ctx.user.id), isNull(userNotifications.readAt)));
+      return { success: true };
+    }),
+  }),
   settings: router({
     public: publicProcedure.query(async () => {
       const db = await getDb();
@@ -264,7 +308,7 @@ export const appRouter = router({
       const ticketId = result[0]?.id;
       if (!ticketId) throw new Error(reminderError("database"));
       await db.insert(ticketLogs).values({ ticketId, actorId: ctx.user.id, action: "CREATED", message: "Ticket created" });
-      await sendTicketEmail({ event: "TICKET_CREATED", recipientEmail: ctx.user.email, subject: `New maintenance ticket ${ticketId}`, text: `${input.title}\n\n${input.description}` });
+      await publishTicketNotifications({ event: "TICKET_CREATED", organizationId: ctx.user.organizationId, actorId: ctx.user.id, recipientIds: await managerIdsForOrganization(ctx.user.organizationId), title: `New ticket #${ticketId}: ${input.title}`, body: input.description, href: "/manager?view=tickets" });
       return { success: true, ticketId };
     }),
     attachMedia: protectedProcedure.input(z.object({ ticketId: z.number().int().positive(), fileName: z.string().min(1).max(255), contentType: z.enum(["image/jpeg", "image/png", "image/webp", "video/mp4", "video/quicktime"]), base64Data: z.string().min(20) })).mutation(async ({ ctx, input }) => {
@@ -288,7 +332,7 @@ export const appRouter = router({
       if (!canMutateManagerTicket({ ticketId: input.ticketId, technicianId: input.technicianId, organizationId: ctx.user.organizationId, ticketOrganizationId: current[0].organizationId })) throw new Error("Manager action is not authorized for this organization");
       await db.update(tickets).set({ assignedToId: input.technicianId, status: "ASSIGNED", priority: input.priority }).where(eq(tickets.id, input.ticketId));
       await db.insert(ticketLogs).values({ ticketId: input.ticketId, actorId: ctx.user.id, action: "ASSIGNED", message: `Assigned technician ${input.technicianId}` });
-      await sendTicketEmail({ event: "TICKET_ASSIGNED", recipientEmail: ctx.user.email, subject: `Ticket ${input.ticketId} assigned`, text: `A technician was assigned to ticket ${input.ticketId}.` });
+      await publishTicketNotifications({ event: "TICKET_ASSIGNED", organizationId: ctx.user.organizationId!, actorId: ctx.user.id, recipientIds: [input.technicianId, current[0].submittedById, ...(await managerIdsForOrganization(ctx.user.organizationId!))], title: `Ticket #${input.ticketId} assigned`, body: `${current[0].title} has been assigned and is ready for action.`, href: "/technician?view=tickets" });
       return { success: true };
     }),
     setPriority: managerOnly.input(z.object({ ticketId: z.number().int().positive(), priority })).mutation(async ({ ctx, input }) => { const db = await getDb(); if (!db || !ctx.user.organizationId) throw new Error(reminderError("database")); const current = await db.select().from(tickets).where(and(eq(tickets.id, input.ticketId), eq(tickets.organizationId, ctx.user.organizationId))).limit(1); if (!current[0]) throw new Error("Ticket not found in your organization"); if (!canMutateManagerTicket({ ticketId: input.ticketId, organizationId: ctx.user.organizationId, ticketOrganizationId: current[0].organizationId })) throw new Error("Manager action is not authorized for this organization"); await db.update(tickets).set({ priority: input.priority }).where(eq(tickets.id, input.ticketId)); await db.insert(ticketLogs).values({ ticketId: input.ticketId, actorId: ctx.user.id, action: "PRIORITY_CHANGED", message: `Priority changed to ${input.priority}` }); return { success: true }; }),
@@ -302,7 +346,7 @@ export const appRouter = router({
       if (mutationError) throw new Error(mutationError);
       await db.update(tickets).set({ status: input.status }).where(eq(tickets.id, input.ticketId));
       await db.insert(ticketLogs).values({ ticketId: input.ticketId, actorId: ctx.user.id, action: "STATUS_CHANGED", message: `Status changed from ${ticket.status} to ${input.status}` });
-      await sendTicketEmail({ event: "STATUS_CHANGED", recipientEmail: ctx.user.email, subject: `Ticket ${input.ticketId} status updated`, text: `Status changed from ${ticket.status} to ${input.status}.` });
+      await publishTicketNotifications({ event: "STATUS_CHANGED", organizationId: ctx.user.organizationId, actorId: ctx.user.id, recipientIds: [ticket.submittedById, ticket.assignedToId ?? 0, ...(await managerIdsForOrganization(ctx.user.organizationId))], title: `Ticket #${input.ticketId} is now ${input.status.replace("_", " ")}`, body: `${ticket.title} moved from ${ticket.status.replace("_", " ")} to ${input.status.replace("_", " ")}.`, href: ctx.user.role === "TECHNICIAN" ? "/manager?view=tickets" : "/tenant?view=tickets" });
       return { success: true };
     }),
   }),
@@ -316,7 +360,7 @@ export const appRouter = router({
       if (completionError) throw new Error(completionError);
       await db.update(tickets).set({ status: "RESOLVED", resolutionNotes: input.resolutionNotes, resolvedAt: new Date() }).where(eq(tickets.id, input.ticketId));
       await db.insert(ticketLogs).values({ ticketId: input.ticketId, actorId: ctx.user.id, action: "RESOLVED", message: `Resolution completed with proof photo: ${input.proofPhotoUrl}` });
-      await sendTicketEmail({ event: "TICKET_RESOLVED", recipientEmail: ctx.user.email, subject: `Ticket ${input.ticketId} resolved`, text: input.resolutionNotes });
+      await publishTicketNotifications({ event: "TICKET_RESOLVED", organizationId: ctx.user.organizationId!, actorId: ctx.user.id, recipientIds: [ticket.submittedById, ...(await managerIdsForOrganization(ctx.user.organizationId!))], title: `Ticket #${input.ticketId} resolved`, body: `${ticket.title} was completed with proof and resolution notes.`, href: "/manager?view=tickets" });
       return { success: true };
     }),
   }),
