@@ -22,6 +22,10 @@ describe("Maintainr dashboard composition", () => {
     expect(styles).toContain('header a[aria-label="Open profile"]');
     expect(styles).toContain('html[dir="rtl"] aside.fixed.inset-y-0');
     expect(styles).toContain("--maintainr-canvas");
+    expect(styles).toContain("--maintainr-text-on-dark");
+    expect(styles).toContain("--maintainr-text-on-dark-muted");
+    expect(styles).toContain('[class*="bg-cyan-400"]:not([class*="bg-cyan-400/"])');
+    expect(styles).toContain('[class*="bg-violet-400/[.03]"]');
     expect(styles).toContain("#ticket-operations");
     expect(styles).toContain("xl:grid-cols-4");
     expect(styles).toContain("Manrope");
@@ -31,5 +35,6 @@ describe("Maintainr dashboard composition", () => {
     expect(styles).toContain("@media (max-width: 1023px)");
     expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
     expect(styles).toContain("Stronger form and table affordances");
+    expect(styles).toContain("aside.fixed.inset-y-0 .text-slate-300");
   });
 });
