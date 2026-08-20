@@ -500,3 +500,21 @@ html:not(.dark) [class*="bg-[#101521]"] [class*="text-slate-500"] { color: #405b
 html[dir="rtl"] .maintainr-dashboard-rail { left:auto; right:0; border-left:0 !important; border-right:1px solid rgba(255,255,255,.08) !important; }
 @media (max-width:1023px) { .maintainr-dashboard-header { min-height:64px; } html[dir="rtl"] .maintainr-dashboard-main.lg\:pl-72 { padding-right:0; } }
 @media (prefers-reduced-motion:reduce) { .maintainr-dashboard-rail a, .maintainr-dashboard-rail button, .maintainr-dashboard-header a, .maintainr-dashboard-header button { transition:none !important; } }
+
+/* Visual-regression alignment: supersede legacy portal selectors with the exact
+   shared shell geometry and color system used by the commercial workspace. */
+aside.maintainr-dashboard-rail.fixed.inset-y-0 {
+  background: linear-gradient(180deg, #0b0f18 0%, #071f1e 100%) !important;
+}
+aside.maintainr-dashboard-rail.fixed.inset-y-0 nav .maintainr-dashboard-nav-active {
+  background: #ecfdf8 !important;
+  border-color: #b7ebdf !important;
+  color: #0f766e !important;
+  box-shadow: none !important;
+}
+aside.maintainr-dashboard-rail.fixed.inset-y-0 nav .maintainr-dashboard-nav-active svg { color: #0f766e !important; }
+.maintainr-dashboard-main > .maintainr-dashboard-header { height: 5rem !important; min-height: 5rem !important; }
+@media (max-width: 1023px) {
+  aside.maintainr-dashboard-rail.fixed.inset-y-0 { width: 18rem !important; padding: 1.25rem !important; }
+  .maintainr-dashboard-main > .maintainr-dashboard-header { height: 5rem !important; min-height: 5rem !important; }
+}
