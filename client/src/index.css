@@ -518,3 +518,42 @@ aside.maintainr-dashboard-rail.fixed.inset-y-0 nav .maintainr-dashboard-nav-acti
   aside.maintainr-dashboard-rail.fixed.inset-y-0 { width: 18rem !important; padding: 1.25rem !important; }
   .maintainr-dashboard-main > .maintainr-dashboard-header { height: 5rem !important; min-height: 5rem !important; }
 }
+
+/* Unified dashboard components: shared action, secondary-control, table, and
+   feedback styling used by the commercial demo and the live SaaS workspace. */
+.maintainr-dashboard-shell {
+  --maintainr-action: #0f766e;
+  --maintainr-action-hover: #115e59;
+  --maintainr-action-foreground: #ffffff;
+  --maintainr-control-surface: #ffffff;
+  --maintainr-control-border: #cfe0dc;
+  --maintainr-control-text: #0f766e;
+  --maintainr-row-hover: #f2fbf8;
+}
+.maintainr-dashboard-shell :is(button, a)[class*="bg-teal-600"][class*="text-white"],
+.maintainr-dashboard-shell :is(button, a)[class*="bg-teal-700"],
+.maintainr-dashboard-shell :is(button, a)[class*="bg-violet-500"],
+.maintainr-dashboard-shell :is(button, a)[class*="bg-cyan-400"][class*="text-black"] {
+  background: var(--maintainr-action) !important;
+  color: var(--maintainr-action-foreground) !important;
+  border-color: transparent !important;
+  box-shadow: 0 8px 18px rgba(15, 118, 110, .16);
+}
+.maintainr-dashboard-shell :is(button, a)[class*="bg-teal-600"]:hover,
+.maintainr-dashboard-shell :is(button, a)[class*="bg-teal-700"]:hover,
+.maintainr-dashboard-shell :is(button, a)[class*="bg-violet-500"]:hover,
+.maintainr-dashboard-shell :is(button, a)[class*="bg-cyan-400"]:hover {
+  background: var(--maintainr-action-hover) !important;
+  color: var(--maintainr-action-foreground) !important;
+}
+.maintainr-dashboard-shell :is(button, a)[class*="border-white/10"][class*="bg-transparent"],
+.maintainr-dashboard-shell :is(button, a)[class*="border-[#cfe0dc]"][class*="bg-white"] {
+  background: var(--maintainr-control-surface) !important;
+  border-color: var(--maintainr-control-border) !important;
+  color: var(--maintainr-control-text) !important;
+  box-shadow: 0 4px 12px rgba(15, 74, 67, .05);
+}
+.maintainr-dashboard-shell [class*="bg-[#101521]"] { border-color: var(--maintainr-line) !important; }
+.maintainr-dashboard-shell [class*="bg-[#101521]"] > div:first-child[class*="border-b"] { background: linear-gradient(90deg, rgba(255,255,255,.94), rgba(234,246,243,.75)); }
+.maintainr-dashboard-shell [class*="cursor-pointer"]:hover { background: var(--maintainr-row-hover); }
+.dark .maintainr-dashboard-shell :is(button, a)[class*="border-white/10"][class*="bg-transparent"] { background: rgba(255,255,255,.04) !important; border-color: rgba(255,255,255,.1) !important; color: #d6e1ee !important; }
