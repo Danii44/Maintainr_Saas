@@ -484,3 +484,19 @@ html:not(.dark) [class*="bg-[#101521]"] [class*="text-slate-500"] { color: #405b
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* Shared dashboard system: the commercial demo and SaaS portals use the same workspace geometry, evergreen rail, teal action color, and sky support accent. */
+.maintainr-dashboard-shell { --dashboard-canvas:#edf5f3; --dashboard-surface:#fff; --dashboard-ink:#172a27; --dashboard-muted:#5d7772; --dashboard-line:#d9e8e5; --dashboard-primary:#0f766e; --dashboard-primary-strong:#115e59; --dashboard-support:#38bdf8; background:var(--dashboard-canvas); color:var(--dashboard-ink); }
+.maintainr-dashboard-rail { background:linear-gradient(180deg,#0b0f18 0%,#071f1e 100%) !important; border-color:rgba(255,255,255,.08) !important; scrollbar-width:thin; scrollbar-color:rgba(143,229,215,.28) transparent; }
+.maintainr-dashboard-nav-link { min-height:44px; }
+.maintainr-dashboard-nav-active { background:rgba(143,229,215,.14) !important; border-color:rgba(143,229,215,.28) !important; color:#baf1e5 !important; box-shadow:none !important; }
+.maintainr-dashboard-nav-active svg { color:#8fe5d7; }
+.maintainr-dashboard-header { background:rgba(237,245,243,.88) !important; border-color:var(--dashboard-line) !important; }
+.maintainr-dashboard-header a[aria-label], .maintainr-dashboard-header button[aria-label] { border-color:var(--dashboard-line); background:rgba(255,255,255,.72); color:var(--dashboard-muted); }
+.maintainr-dashboard-header a[aria-label]:hover, .maintainr-dashboard-header button[aria-label]:hover { border-color:rgba(15,118,110,.35); color:var(--dashboard-primary); }
+.dark .maintainr-dashboard-shell { --dashboard-canvas:#0c1a1a; --dashboard-surface:#132a29; --dashboard-ink:#ecf8f5; --dashboard-muted:#b0c8c2; --dashboard-line:#284541; }
+.dark .maintainr-dashboard-header { background:rgba(8,11,18,.86) !important; border-color:rgba(255,255,255,.08) !important; }
+.dark .maintainr-dashboard-header a[aria-label], .dark .maintainr-dashboard-header button[aria-label] { border-color:rgba(255,255,255,.1); background:rgba(255,255,255,.04); color:#d6e1ee; }
+html[dir="rtl"] .maintainr-dashboard-rail { left:auto; right:0; border-left:0 !important; border-right:1px solid rgba(255,255,255,.08) !important; }
+@media (max-width:1023px) { .maintainr-dashboard-header { min-height:64px; } html[dir="rtl"] .maintainr-dashboard-main.lg\:pl-72 { padding-right:0; } }
+@media (prefers-reduced-motion:reduce) { .maintainr-dashboard-rail a, .maintainr-dashboard-rail button, .maintainr-dashboard-header a, .maintainr-dashboard-header button { transition:none !important; } }
