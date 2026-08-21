@@ -120,3 +120,45 @@
 .dark .maintainr-status-badge.maintainr-status-info { background-color: color-mix(in srgb, var(--maintainr-mint-100) 12%, transparent) !important; border-color: color-mix(in srgb, var(--maintainr-mint-100) 30%, transparent) !important; }
 .dark .maintainr-status-badge.maintainr-status-danger { background-color: color-mix(in srgb, var(--destructive) 14%, transparent) !important; border-color: color-mix(in srgb, var(--destructive) 35%, transparent) !important; }
 .dark .maintainr-status-badge.maintainr-app-copy { background-color: color-mix(in srgb, var(--maintainr-muted) 12%, transparent) !important; }
+
+/* Sticky, scroll-aware public home header. */
+.dark .maintainr-saas-public-header {
+  background: color-mix(in srgb, var(--maintainr-canvas) 62%, transparent);
+  border-bottom: 1px solid transparent;
+  color: var(--maintainr-ink);
+  isolation: isolate;
+  transition: background-color 220ms var(--ease-out, ease), border-color 220ms var(--ease-out, ease), box-shadow 220ms var(--ease-out, ease), -webkit-backdrop-filter 220ms var(--ease-out, ease), backdrop-filter 220ms var(--ease-out, ease);
+}
+
+.dark .maintainr-saas-public-header-scrolled {
+  background: color-mix(in srgb, var(--maintainr-canvas) 76%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--maintainr-sage-400) 36%, var(--maintainr-line));
+  box-shadow: 0 .9rem 2.7rem color-mix(in srgb, var(--maintainr-ink-950) 36%, transparent), inset 0 1px 0 color-mix(in srgb, var(--maintainr-mint-100) 7%, transparent);
+}
+
+.dark .maintainr-saas-public-header::after {
+  background: linear-gradient(90deg, var(--maintainr-evergreen-700), var(--maintainr-sage-400), var(--maintainr-evergreen-700));
+  bottom: -1px;
+  content: "";
+  height: 1px;
+  inset-inline: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: scaleX(.18);
+  transition: opacity 220ms var(--ease-out, ease), transform 300ms var(--ease-out, ease);
+}
+
+.dark .maintainr-saas-public-header-scrolled::after { opacity: .9; transform: scaleX(1); }
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .dark .maintainr-saas-public-header {
+    -webkit-backdrop-filter: blur(18px) saturate(132%);
+    backdrop-filter: blur(18px) saturate(132%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dark .maintainr-saas-public-header,
+  .dark .maintainr-saas-public-header::after { transition: none; }
+}
