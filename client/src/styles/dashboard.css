@@ -372,3 +372,41 @@ main.lg\:pl-72 > div > .mb-8 h1 { color: var(--dashboard-ink) !important; font-s
   .maintainr-oversight-card,
   .maintainr-next-focus { transition: none; }
 }
+
+/* Dashboard card affordances: lightweight feedback and contextual hover hints. */
+.maintainr-card-affordance { cursor: help; }
+
+.maintainr-card-affordance::after {
+  background: color-mix(in srgb, var(--maintainr-ink-950) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--maintainr-mint-100) 24%, transparent);
+  border-radius: .65rem;
+  box-shadow: 0 .7rem 1.5rem color-mix(in srgb, var(--maintainr-ink-950) 22%, transparent);
+  color: var(--maintainr-on-dark);
+  content: attr(data-card-tip);
+  font-size: .6875rem;
+  font-weight: 650;
+  inset-block-end: .8rem;
+  inset-inline-end: .8rem;
+  line-height: 1.35;
+  max-inline-size: min(15rem, calc(100% - 1.6rem));
+  opacity: 0;
+  padding: .5rem .62rem;
+  pointer-events: none;
+  position: absolute;
+  transform: translateY(.35rem);
+  transition: opacity 160ms var(--ease-out, ease), transform 160ms var(--ease-out, ease);
+  z-index: 3;
+}
+
+.maintainr-card-affordance:is(:hover, :focus-within)::after { opacity: 1; transform: translateY(0); }
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .maintainr-card-affordance::before { transition: opacity 180ms var(--ease-out, ease), transform 180ms var(--ease-out, ease); }
+  .maintainr-card-affordance:hover::before { opacity: 1; transform: scale(1.02); }
+  .maintainr-card-affordance :is(button, a, [role="button"]) { transition: color 160ms var(--ease-out, ease), transform 160ms var(--ease-out, ease); }
+  .maintainr-card-affordance :is(button, a, [role="button"]):hover { transform: translateX(.12rem); }
+}
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .maintainr-card-affordance::after { display: none; }
+}
