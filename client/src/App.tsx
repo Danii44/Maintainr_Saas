@@ -32,7 +32,7 @@ type Ticket = { id: string; title: string; unit: string; category: string; prior
 type MediaContentType = "image/jpeg" | "image/png" | "image/webp" | "video/mp4" | "video/quicktime";
 type MediaUploadInput = { ticketId: number; fileName: string; contentType: MediaContentType; base64Data: string };
 
-const DEFAULT_MAINTAINR_LOGO = "/assets/images/maintainr-logo-mark.png";
+const DEFAULT_MAINTAINR_LOGO = "/assets/images/maintainr-logo-mark.webp";
 
 async function uploadTenantFiles(files: File[], ticketId: number, upload: (input: MediaUploadInput) => Promise<unknown>, onProgress: (fileName: string, state: "uploading" | "success" | "failed") => void) {
   return Promise.allSettled(files.map(file => new Promise<void>((resolve, reject) => {
