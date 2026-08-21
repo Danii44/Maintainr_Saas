@@ -187,7 +187,7 @@ describe("ticket mutation procedures", () => {
 
     const localStorageDb = createDb([{ id: 90, organizationId: 1, status: "IN_PROGRESS", assignedToId: 30 }]);
     getDbMock.mockResolvedValueOnce(localStorageDb);
-    await expect(caller.technician.complete({ ticketId: 90, proofPhotoUrl: "/manus-storage/tickets/90/qa-proof.png", resolutionNotes: "Stored proof accepted" })).resolves.toEqual({ success: true });
+    await expect(caller.technician.complete({ ticketId: 90, proofPhotoUrl: "/media/tickets/90/qa-proof.png", resolutionNotes: "Stored proof accepted" })).resolves.toEqual({ success: true });
     expect(localStorageDb.updates).toHaveLength(1);
 
     const wrongOrgDb = createDb([{ id: 89, organizationId: 2, status: "IN_PROGRESS", assignedToId: 30 }]);

@@ -7,6 +7,18 @@ import superjson from "superjson";
 import App from "./App";
 import "./index.css";
 
+const analyticsEndpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT?.replace(/\/+$/, "");
+const analyticsWebsiteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID;
+
+if (analyticsEndpoint && analyticsWebsiteId && !document.querySelector('script[data-maintainr-analytics]')) {
+  const analyticsScript = document.createElement("script");
+  analyticsScript.src = `${analyticsEndpoint}/umami`;
+  analyticsScript.defer = true;
+  analyticsScript.dataset.websiteId = analyticsWebsiteId;
+  analyticsScript.dataset.maintainrAnalytics = "true";
+  document.head.appendChild(analyticsScript);
+}
+
 const queryClient = new QueryClient();
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {

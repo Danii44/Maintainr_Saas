@@ -28,7 +28,7 @@ async function forgeStoragePut(key: string, data: Buffer | Uint8Array | string, 
   const { url } = (await presignResp.json()) as { url: string };
   const uploadResp = await fetch(url, { method: "PUT", headers: { "Content-Type": contentType }, body: typeof data === "string" ? data : Buffer.from(data) });
   if (!uploadResp.ok) throw new Error(`Storage upload failed (${uploadResp.status})`);
-  return { key, url: `/manus-storage/${key}` };
+  return { key, url: `/media/${key}` };
 }
 
 export async function storagePut(relKey: string, data: Buffer | Uint8Array | string, contentType = "application/octet-stream") {

@@ -351,7 +351,7 @@ export const appRouter = router({
     }),
   }),
   technician: router({
-    complete: technicianOnly.input(z.object({ ticketId: z.number().int().positive(), proofPhotoUrl: z.string().url().or(z.string().regex(/^\/manus-storage\//, "Proof photo must use a storage URL")), resolutionNotes: z.string().min(5) })).mutation(async ({ ctx, input }) => {
+    complete: technicianOnly.input(z.object({ ticketId: z.number().int().positive(), proofPhotoUrl: z.string().url().or(z.string().regex(/^\/media\//, "Proof photo must use a storage URL")), resolutionNotes: z.string().min(5) })).mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database unavailable");
       const current = await db.select().from(tickets).where(and(eq(tickets.id, input.ticketId), eq(tickets.assignedToId, ctx.user.id))).limit(1);
