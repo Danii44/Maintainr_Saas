@@ -6,6 +6,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { handlePortableMaintenanceReminder } from "../reminderScheduler";
 import { registerHealthRoutes } from "../health";
+import { handleResendDeliveryWebhook, handleTwilioDeliveryWebhook } from "../providerWebhooks";
 
 export function createApp() {
   const app = express();
@@ -24,6 +25,8 @@ export function createApp() {
       next();
     });
   }
+  app.post("/api/webhooks/resend", express.raw({ type: "application/json", limit: "1mb" }), handleResendDeliveryWebhook);
+  app.post("/api/webhooks/twilio", express.urlencoded({ extended: false, limit: "1mb" }), handleTwilioDeliveryWebhook);
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);

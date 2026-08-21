@@ -27,6 +27,7 @@ export async function sendTicketEmail(input: NotificationInput) {
       to: [input.recipientEmail],
       subject: input.subject,
       text: input.text,
+      tags: [{ name: "maintainr_event", value: input.event }],
     }),
   });
 
@@ -46,6 +47,7 @@ export async function sendTicketSms(input: { recipientPhone?: string | null; tex
   const accountSid = process.env.TWILIO_ACCOUNT_SID!;
   const auth = Buffer.from(`${accountSid}:${process.env.TWILIO_AUTH_TOKEN!}`).toString("base64");
   const body = new URLSearchParams({ To: input.recipientPhone, From: process.env.TWILIO_FROM!, Body: input.text });
+  if (process.env.TWILIO_STATUS_CALLBACK_URL) body.set("StatusCallback", process.env.TWILIO_STATUS_CALLBACK_URL);
   const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, { method: "POST", headers: { Authorization: `Basic ${auth}`, "Content-Type": "application/x-www-form-urlencoded" }, body });
   if (!response.ok) return { delivered: false, mode: "fallback" as const, reason: `SMS provider returned ${response.status}` };
   return { delivered: true, mode: "sms" as const };
