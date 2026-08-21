@@ -1,0 +1,89 @@
+.dark {
+  color-scheme: dark;
+  --maintainr-canvas: var(--maintainr-ink-950);
+  --maintainr-panel: var(--maintainr-forest-900);
+  --maintainr-panel-subtle: var(--maintainr-evergreen-800);
+  --maintainr-line: #315d50;
+  --maintainr-ink: var(--maintainr-mint-100);
+  --maintainr-muted: #b4d0bc;
+  --maintainr-soft: #1b4339;
+  --maintainr-field: #102d29;
+  --maintainr-field-border: #417263;
+  --maintainr-placeholder: #9fbda9;
+  --maintainr-focus: var(--maintainr-sage-400);
+  --maintainr-on-dark: var(--maintainr-mint-100);
+  --maintainr-on-dark-muted: #c7dfce;
+  --maintainr-action: var(--maintainr-sage-400);
+  --maintainr-action-hover: var(--maintainr-mint-100);
+  --maintainr-action-foreground: var(--maintainr-ink-950);
+  --background: var(--maintainr-canvas);
+  --foreground: var(--maintainr-ink);
+  --card: var(--maintainr-panel);
+  --card-foreground: var(--maintainr-ink);
+  --popover: var(--maintainr-panel);
+  --popover-foreground: var(--maintainr-ink);
+  --primary: var(--maintainr-sage-400);
+  --primary-foreground: var(--maintainr-ink-950);
+  --secondary: var(--maintainr-evergreen-800);
+  --secondary-foreground: var(--maintainr-ink);
+  --muted: var(--maintainr-evergreen-800);
+  --muted-foreground: var(--maintainr-muted);
+  --accent: #1e4a3e;
+  --accent-foreground: var(--maintainr-ink);
+  --destructive: #db827c;
+  --destructive-foreground: var(--maintainr-ink-950);
+  --border: var(--maintainr-line);
+  --input: var(--maintainr-field-border);
+  --ring: var(--maintainr-focus);
+  --chart-1: var(--maintainr-sage-400);
+  --chart-2: var(--maintainr-mint-100);
+  --chart-3: #d0a04f;
+  --chart-4: #73b98d;
+  --chart-5: #e18b82;
+  --sidebar: var(--maintainr-ink-950);
+  --sidebar-foreground: var(--maintainr-mint-100);
+  --sidebar-primary: var(--maintainr-sage-400);
+  --sidebar-primary-foreground: var(--maintainr-ink-950);
+  --sidebar-accent: rgba(218, 241, 222, .10);
+  --sidebar-accent-foreground: var(--maintainr-mint-100);
+  --sidebar-border: rgba(218, 241, 222, .14);
+  --sidebar-ring: var(--maintainr-sage-400);
+}
+
+.dark #root {
+  background: var(--maintainr-canvas);
+  color: var(--maintainr-ink);
+}
+
+.dark #root :is(input, textarea, select, [role="combobox"]) {
+  background: var(--maintainr-field) !important;
+  border-color: var(--maintainr-field-border) !important;
+  color: var(--maintainr-ink) !important;
+}
+
+.dark #root :is(input, textarea, select, [role="combobox"])::placeholder { color: var(--maintainr-placeholder) !important; }
+.dark #root :is(input, textarea, select, [role="combobox"]):focus { border-color: var(--maintainr-focus) !important; box-shadow: 0 0 0 3px rgba(142, 182, 155, .18) !important; }
+
+/* Compatibility bridge for existing Tailwind utilities during the component-by-component cleanup. */
+.dark #root [class*="bg-[#080"],
+.dark #root [class*="bg-[#090"],
+.dark #root [class*="bg-[#0b0"],
+.dark #root [class*="bg-[#101"] { background-color: var(--maintainr-panel) !important; border-color: var(--maintainr-line) !important; }
+.dark #root [class*="bg-white"],
+.dark #root [class*="bg-slate-50"] { background-color: var(--maintainr-panel) !important; border-color: var(--maintainr-line) !important; }
+.dark #root [class*="text-slate-100"],
+.dark #root [class*="text-slate-200"],
+.dark #root [class*="text-slate-300"],
+.dark #root [class*="text-slate-900"],
+.dark #root [class*="text-slate-800"] { color: var(--maintainr-ink) !important; }
+.dark #root [class*="text-slate-400"],
+.dark #root [class*="text-slate-500"],
+.dark #root [class*="text-slate-600"],
+.dark #root [class*="text-slate-700"] { color: var(--maintainr-muted) !important; }
+.dark #root [class*="bg-violet-"],
+.dark #root [class*="bg-teal-600"],
+.dark #root [class*="bg-teal-700"] { background-color: var(--maintainr-action) !important; color: var(--maintainr-action-foreground) !important; }
+.dark #root [class*="text-violet-"],
+.dark #root [class*="text-teal-700"] { color: var(--maintainr-sage-400) !important; }
+.dark #root [class*="border-violet-"],
+.dark #root [class*="border-teal-"] { border-color: var(--maintainr-line) !important; }

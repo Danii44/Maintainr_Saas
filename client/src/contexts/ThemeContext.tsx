@@ -19,7 +19,7 @@ interface ThemeProviderProps {
 
 function ThemeDock({ theme, toggleTheme }: { theme: Theme; toggleTheme: () => void }) {
   const isDark = theme === "dark";
-  return <button type="button" onClick={toggleTheme} className="fixed bottom-5 end-5 z-[80] inline-flex min-h-11 items-center gap-2 rounded-full border border-slate-200 bg-white/95 px-4 text-xs font-semibold text-slate-700 shadow-lg shadow-slate-900/10 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-slate-900/95 dark:text-slate-100 dark:shadow-black/20" aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"} title={isDark ? "Switch to light mode" : "Switch to dark mode"}>{isDark ? <Sun size={16}/> : <Moon size={16}/>}<span>{isDark ? "Light" : "Dark"}</span></button>;
+  return <button type="button" onClick={toggleTheme} className="maintainr-theme-dock fixed bottom-5 end-5 z-[80] inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-xs font-semibold backdrop-blur transition hover:-translate-y-0.5" aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"} title={isDark ? "Switch to light mode" : "Switch to dark mode"}>{isDark ? <Sun size={16}/> : <Moon size={16}/>}<span>{isDark ? "Light" : "Dark"}</span></button>;
 }
 
 export function ThemeProvider({ children, switchable = true }: ThemeProviderProps) {

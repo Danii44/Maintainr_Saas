@@ -1,0 +1,96 @@
+/* Shared workspace shell used by the live SaaS application and Commercial’s isolated demo. */
+.maintainr-dashboard-shell,
+main.lg\:pl-72 {
+  --dashboard-canvas: var(--maintainr-canvas);
+  --dashboard-panel: var(--maintainr-panel);
+  --dashboard-ink: var(--maintainr-ink);
+  --dashboard-muted: var(--maintainr-muted);
+  --dashboard-line: var(--maintainr-line);
+  --dashboard-action: var(--maintainr-action);
+  --dashboard-action-hover: var(--maintainr-action-hover);
+  background: var(--dashboard-canvas) !important;
+  color: var(--dashboard-ink);
+  min-height: 100vh;
+}
+
+.maintainr-dashboard-shell { --maintainr-control-surface: var(--maintainr-panel); --maintainr-control-border: var(--maintainr-line); --maintainr-control-text: var(--maintainr-action); --maintainr-row-hover: var(--maintainr-soft); }
+
+aside.fixed.inset-y-0,
+.maintainr-dashboard-rail {
+  background: linear-gradient(180deg, var(--maintainr-forest-900), var(--maintainr-ink-950)) !important;
+  border-color: var(--sidebar-border) !important;
+  box-shadow: 12px 0 38px rgba(5, 31, 32, .16);
+  scrollbar-color: rgba(218, 241, 222, .25) transparent;
+  scrollbar-width: thin;
+}
+
+aside.fixed.inset-y-0 :is(.text-slate-100, .text-slate-200, .text-white) { color: var(--maintainr-on-dark) !important; }
+aside.fixed.inset-y-0 :is(.text-slate-300, .text-slate-400, .text-slate-500, .text-slate-600) { color: var(--maintainr-on-dark-muted) !important; }
+aside.fixed.inset-y-0 nav :is(a, button) { border: 1px solid transparent; border-radius: .75rem; color: var(--maintainr-on-dark-muted) !important; font-size: .82rem; font-weight: 650; min-height: 2.75rem; }
+aside.fixed.inset-y-0 nav :is(a, button):hover { background: rgba(218, 241, 222, .10) !important; color: var(--maintainr-on-dark) !important; }
+aside.fixed.inset-y-0 nav :is(a, button)[class*="bg-teal-50"],
+aside.fixed.inset-y-0 nav .maintainr-dashboard-nav-active {
+  background: var(--maintainr-mint-100) !important;
+  border-color: transparent !important;
+  color: var(--maintainr-ink-950) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .16);
+}
+aside.fixed.inset-y-0 nav :is(a, button)[class*="bg-teal-50"] svg,
+aside.fixed.inset-y-0 nav .maintainr-dashboard-nav-active svg { color: var(--maintainr-evergreen-700) !important; }
+
+main.lg\:pl-72 {
+  background: radial-gradient(circle at 95% 0%, rgba(142, 182, 155, .18), transparent 27rem), var(--dashboard-canvas) !important;
+}
+main.lg\:pl-72 > header,
+.maintainr-dashboard-header {
+  backdrop-filter: blur(18px);
+  background: color-mix(in srgb, var(--dashboard-canvas) 90%, transparent) !important;
+  border-color: var(--dashboard-line) !important;
+  box-shadow: 0 8px 24px rgba(5, 31, 32, .06);
+}
+main.lg\:pl-72 > div { margin-inline: auto; max-width: 94rem; }
+main.lg\:pl-72 > div > .mb-8 { border-bottom: 1px solid var(--dashboard-line); margin-bottom: 2.25rem; padding-bottom: 1.3rem; }
+main.lg\:pl-72 > div > .mb-8 h1 { color: var(--dashboard-ink) !important; font-size: clamp(1.5rem, 2vw, 1.95rem); font-weight: 780; letter-spacing: -.055em; line-height: 1.08; }
+
+.maintainr-dashboard-shell :is(button, a)[class*="bg-teal-600"],
+.maintainr-dashboard-shell :is(button, a)[class*="bg-teal-700"],
+.maintainr-dashboard-shell :is(button, a)[class*="bg-violet-"],
+.maintainr-dashboard-shell :is(button, a)[class*="bg-cyan-400"] {
+  background: var(--dashboard-action) !important;
+  border-color: transparent !important;
+  box-shadow: 0 8px 18px rgba(35, 83, 71, .18);
+  color: var(--maintainr-action-foreground) !important;
+}
+.maintainr-dashboard-shell :is(button, a)[class*="bg-teal-600"]:hover,
+.maintainr-dashboard-shell :is(button, a)[class*="bg-teal-700"]:hover,
+.maintainr-dashboard-shell :is(button, a)[class*="bg-violet-"]:hover,
+.maintainr-dashboard-shell :is(button, a)[class*="bg-cyan-400"]:hover { background: var(--dashboard-action-hover) !important; color: var(--maintainr-action-foreground) !important; }
+.maintainr-dashboard-shell :is(button, a)[class*="border-white/10"][class*="bg-transparent"],
+.maintainr-dashboard-shell :is(button, a)[class*="border-[#cfe0dc]"][class*="bg-white"],
+.maintainr-dashboard-header :is(a, button)[aria-label] {
+  background: var(--maintainr-control-surface) !important;
+  border-color: var(--maintainr-control-border) !important;
+  color: var(--maintainr-control-text) !important;
+}
+.maintainr-dashboard-shell [class*="cursor-pointer"]:hover { background: var(--maintainr-row-hover); }
+.maintainr-dashboard-shell [class*="bg-[#101521]"] { background: var(--dashboard-panel) !important; border-color: var(--dashboard-line) !important; }
+.maintainr-dashboard-shell [class*="bg-[#101521]"] > div:first-child[class*="border-b"] { background: color-mix(in srgb, var(--dashboard-panel) 92%, var(--maintainr-mint-100)) !important; }
+
+.maintainr-next-focus { background: var(--maintainr-evergreen-700) !important; color: var(--maintainr-on-dark) !important; }
+.maintainr-next-focus :is(h1, h2, h3, h4, strong, p, [class*="text-"]) { color: inherit !important; }
+
+.maintainr-dashboard-header :is(button, a)[aria-label],
+.maintainr-dashboard-rail :is(button, a)[aria-label] { min-height: 2.75rem; min-width: 2.75rem; }
+
+@media (max-width: 1023px) {
+  aside.fixed.inset-y-0 { padding: 1rem; width: min(19rem, 86vw); }
+  main.lg\:pl-72 > header, .maintainr-dashboard-header { height: 4.75rem; min-height: 4.75rem; padding-inline: 1rem; }
+  main.lg\:pl-72 > div { padding-inline: 1rem !important; padding-top: 1.35rem !important; }
+}
+
+@supports (padding: max(0px)) {
+  @media (max-width: 1023px) {
+    .maintainr-dashboard-rail { padding-bottom: max(1.25rem, calc(1.25rem + env(safe-area-inset-bottom))) !important; }
+    .maintainr-dashboard-main > :last-child { padding-bottom: max(7rem, calc(5rem + env(safe-area-inset-bottom))) !important; }
+  }
+}

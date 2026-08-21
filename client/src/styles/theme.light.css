@@ -1,0 +1,97 @@
+html:not(.dark) {
+  color-scheme: light;
+  --maintainr-canvas: var(--maintainr-mint-100);
+  --maintainr-panel: var(--maintainr-white);
+  --maintainr-panel-subtle: #edf8ef;
+  --maintainr-line: #b9d6c2;
+  --maintainr-ink: var(--maintainr-ink-950);
+  --maintainr-muted: #496d5e;
+  --maintainr-soft: #e6f4e9;
+  --maintainr-field: var(--maintainr-white);
+  --maintainr-field-border: #a8cbb3;
+  --maintainr-placeholder: #668976;
+  --maintainr-focus: var(--maintainr-evergreen-700);
+  --maintainr-on-dark: var(--maintainr-white);
+  --maintainr-on-dark-muted: #d5eadb;
+  --maintainr-action: var(--maintainr-evergreen-700);
+  --maintainr-action-hover: var(--maintainr-evergreen-800);
+  --maintainr-action-foreground: var(--maintainr-white);
+  --background: var(--maintainr-canvas);
+  --foreground: var(--maintainr-ink);
+  --card: var(--maintainr-panel);
+  --card-foreground: var(--maintainr-ink);
+  --popover: var(--maintainr-panel);
+  --popover-foreground: var(--maintainr-ink);
+  --primary: var(--maintainr-evergreen-700);
+  --primary-foreground: var(--maintainr-white);
+  --secondary: #e6f4e9;
+  --secondary-foreground: var(--maintainr-ink);
+  --muted: #e6f4e9;
+  --muted-foreground: var(--maintainr-muted);
+  --accent: #e0f0e4;
+  --accent-foreground: var(--maintainr-ink);
+  --destructive: var(--maintainr-danger);
+  --destructive-foreground: var(--maintainr-white);
+  --border: var(--maintainr-line);
+  --input: var(--maintainr-field-border);
+  --ring: var(--maintainr-focus);
+  --chart-1: var(--maintainr-evergreen-700);
+  --chart-2: var(--maintainr-evergreen-800);
+  --chart-3: var(--maintainr-sage-400);
+  --chart-4: #4d8065;
+  --chart-5: var(--maintainr-danger);
+  --sidebar: var(--maintainr-forest-900);
+  --sidebar-foreground: var(--maintainr-white);
+  --sidebar-primary: var(--maintainr-mint-100);
+  --sidebar-primary-foreground: var(--maintainr-ink-950);
+  --sidebar-accent: rgba(218, 241, 222, .11);
+  --sidebar-accent-foreground: var(--maintainr-white);
+  --sidebar-border: rgba(218, 241, 222, .18);
+  --sidebar-ring: var(--maintainr-sage-400);
+}
+
+html:not(.dark) #root {
+  background: var(--maintainr-canvas);
+  color: var(--maintainr-ink);
+}
+
+html:not(.dark) #root :is(input, textarea, select, [role="combobox"]) {
+  background: var(--maintainr-field) !important;
+  border-color: var(--maintainr-field-border) !important;
+  color: var(--maintainr-ink) !important;
+}
+
+html:not(.dark) #root :is(input, textarea, select, [role="combobox"])::placeholder { color: var(--maintainr-placeholder) !important; }
+html:not(.dark) #root :is(input, textarea, select, [role="combobox"]):focus { border-color: var(--maintainr-focus) !important; box-shadow: 0 0 0 3px rgba(35, 83, 71, .16) !important; }
+
+/* Compatibility bridge for existing Tailwind utilities during the component-by-component cleanup. */
+html:not(.dark) #root [class*="bg-[#080"],
+html:not(.dark) #root [class*="bg-[#090"],
+html:not(.dark) #root [class*="bg-[#0b0"],
+html:not(.dark) #root [class*="bg-[#101"] { background-color: var(--maintainr-panel) !important; border-color: var(--maintainr-line) !important; }
+html:not(.dark) #root [class*="text-slate-100"],
+html:not(.dark) #root [class*="text-slate-200"],
+html:not(.dark) #root [class*="text-slate-300"] { color: var(--maintainr-ink) !important; }
+html:not(.dark) #root [class*="text-slate-400"],
+html:not(.dark) #root [class*="text-slate-500"],
+html:not(.dark) #root [class*="text-slate-600"] { color: var(--maintainr-muted) !important; }
+html:not(.dark) #root [class*="bg-violet-"],
+html:not(.dark) #root [class*="bg-teal-600"],
+html:not(.dark) #root [class*="bg-teal-700"] { background-color: var(--maintainr-action) !important; color: var(--maintainr-action-foreground) !important; }
+html:not(.dark) #root [class*="text-violet-"],
+html:not(.dark) #root [class*="text-teal-700"] { color: var(--maintainr-action) !important; }
+html:not(.dark) #root [class*="border-violet-"],
+html:not(.dark) #root [class*="border-teal-"] { border-color: var(--maintainr-line) !important; }
+
+
+html:not(.dark) .maintainr-saas-home {
+  background: radial-gradient(circle at 50% -20%, rgba(35, 83, 71, .28), transparent 38rem), radial-gradient(circle at 10% 54%, rgba(142, 182, 155, .34), transparent 32rem), var(--maintainr-mint-100) !important;
+  color: var(--maintainr-ink) !important;
+}
+html:not(.dark) .maintainr-saas-home :is(h1, h2, h3, .text-white, .text-slate-100, .text-slate-200, .text-slate-300) { color: var(--maintainr-ink) !important; }
+html:not(.dark) .maintainr-saas-home :is(.text-slate-400, .text-slate-500, .text-slate-600) { color: var(--maintainr-muted) !important; }
+html:not(.dark) .maintainr-saas-home [class*="text-teal-"] { color: var(--maintainr-action) !important; }
+html:not(.dark) .maintainr-saas-home [class*="bg-teal-600"],
+html:not(.dark) .maintainr-saas-home [class*="bg-teal-700"] { background: var(--maintainr-action) !important; color: var(--maintainr-action-foreground) !important; }
+html:not(.dark) .maintainr-saas-home [class*="bg-[#101521]"] { background: var(--maintainr-panel) !important; border-color: var(--maintainr-line) !important; }
+html:not(.dark) .maintainr-saas-home [class*="bg-white/[.025]"] { background: var(--maintainr-panel-subtle) !important; border-color: var(--maintainr-line) !important; }

@@ -15,7 +15,7 @@ const client = new Client({
 
 try {
   await client.connect();
-  const sql = await readFile(new URL("../MAINTAINR_SAAS_SCHEMA.sql", import.meta.url), "utf8");
+  const sql = await readFile(new URL("../database/schema/MAINTAINR_SAAS_SCHEMA.sql", import.meta.url), "utf8");
   await client.query(sql);
   console.log("Maintainr live SaaS operational schema is available.");
 } finally {

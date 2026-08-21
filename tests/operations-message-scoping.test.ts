@@ -11,7 +11,7 @@ describe("operations message visibility", () => {
   });
 
   it("restores all disposable QA roles as seeded conversation participants on every idempotent run", async () => {
-    const sql = await readFile(new URL("DEMO_ACCOUNTS_SEED.sql", root), "utf8");
+    const sql = await readFile(new URL("database/qa/DEMO_ACCOUNTS_SEED.sql", root), "utf8");
     expect(sql).toContain('VALUES (v_conversation_id, v_manager_id), (v_conversation_id, v_tenant_id), (v_conversation_id, v_technician_id), (v_conversation_id, v_owner_id)');
     expect(sql).toContain('ON CONFLICT ("conversationId", "userId") DO NOTHING');
   });

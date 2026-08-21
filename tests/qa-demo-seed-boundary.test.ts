@@ -7,7 +7,7 @@ describe("disposable SaaS QA seed boundary", () => {
   it("uses only the dedicated SaaS database and retains teal/sky demo branding", async () => {
     const [seedRunner, seedSql] = await Promise.all([
       readFile(new URL("scripts/seed-saas-qa-accounts.mjs", root), "utf8"),
-      readFile(new URL("DEMO_ACCOUNTS_SEED.sql", root), "utf8"),
+      readFile(new URL("database/qa/DEMO_ACCOUNTS_SEED.sql", root), "utf8"),
     ]);
 
     expect(seedRunner).toContain("process.env.MAINTAINR_SAAS_DATABASE_URL");

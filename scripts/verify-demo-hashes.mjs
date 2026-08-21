@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 const scrypt = promisify(scryptCallback);
-const sql = await readFile(new URL("../DEMO_ACCOUNTS_SEED.sql", import.meta.url), "utf8");
+const sql = await readFile(new URL("../database/qa/DEMO_ACCOUNTS_SEED.sql", import.meta.url), "utf8");
 const cases = [
   ["manager.demo@maintainr.test", "ManagerDemo2026!"],
   ["tenant.demo@maintainr.test", "TenantDemo2026!"],

@@ -34,11 +34,11 @@ A Property Manager creates a secure workspace and becomes its first Manager. The
 Create a new, empty PostgreSQL database owned by your organization. Import the baseline first, then the operational expansion:
 
 ```bash
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f POSTGRESQL_SCHEMA.sql
-psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f MAINTAINR_SAAS_SCHEMA.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f database/schema/POSTGRESQL_SCHEMA.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f database/schema/MAINTAINR_SAAS_SCHEMA.sql
 ```
 
-`POSTGRESQL_SCHEMA.sql` is the canonical full baseline. `MAINTAINR_SAAS_SCHEMA.sql` is a required additive, idempotent expansion for conversations, notifications, calendar data, evidence metadata, and related operational features. Do **not** import `DEMO_ACCOUNTS_SEED.sql` or `REMOVE_DEMO_DATA_KEEP_LOGINS.sql` into a customer database; they are isolated QA utilities only.
+`database/schema/POSTGRESQL_SCHEMA.sql` is the canonical full baseline. `database/schema/MAINTAINR_SAAS_SCHEMA.sql` is a required additive, idempotent expansion for conversations, notifications, calendar data, evidence metadata, and related operational features. Do **not** import `database/qa/DEMO_ACCOUNTS_SEED.sql` or `database/qa/REMOVE_DEMO_DATA_KEEP_LOGINS.sql` into a customer database; they are isolated QA utilities only.
 
 ## Configure secrets safely
 

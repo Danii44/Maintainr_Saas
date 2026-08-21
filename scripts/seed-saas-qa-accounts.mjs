@@ -15,7 +15,7 @@ const client = new Client({
 
 try {
   await client.connect();
-  const sql = await readFile(new URL("../DEMO_ACCOUNTS_SEED.sql", import.meta.url), "utf8");
+  const sql = await readFile(new URL("../database/qa/DEMO_ACCOUNTS_SEED.sql", import.meta.url), "utf8");
   await client.query(sql);
   console.log("Disposable SaaS QA accounts and sample workflow data are available.");
 } finally {
