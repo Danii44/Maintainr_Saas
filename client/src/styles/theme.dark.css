@@ -3,13 +3,13 @@
   --maintainr-canvas: var(--maintainr-ink-950);
   --maintainr-panel: var(--maintainr-forest-900);
   --maintainr-panel-subtle: var(--maintainr-evergreen-800);
-  --maintainr-line: #315d50;
+  --maintainr-line: #467b6a;
   --maintainr-ink: var(--maintainr-mint-100);
-  --maintainr-muted: #b4d0bc;
-  --maintainr-soft: #1b4339;
-  --maintainr-field: #102d29;
-  --maintainr-field-border: #417263;
-  --maintainr-placeholder: #9fbda9;
+  --maintainr-muted: #c7dfce;
+  --maintainr-soft: #163832;
+  --maintainr-field: #0e302b;
+  --maintainr-field-border: #5b907a;
+  --maintainr-placeholder: #b4d0bc;
   --maintainr-focus: var(--maintainr-sage-400);
   --maintainr-on-dark: var(--maintainr-mint-100);
   --maintainr-on-dark-muted: #c7dfce;
@@ -28,7 +28,7 @@
   --secondary-foreground: var(--maintainr-ink);
   --muted: var(--maintainr-evergreen-800);
   --muted-foreground: var(--maintainr-muted);
-  --accent: #1e4a3e;
+  --accent: var(--maintainr-evergreen-800);
   --accent-foreground: var(--maintainr-ink);
   --destructive: #db827c;
   --destructive-foreground: var(--maintainr-ink-950);
@@ -162,3 +162,14 @@
   .dark .maintainr-saas-public-header,
   .dark .maintainr-saas-public-header::after { transition: none; }
 }
+
+/* Refined public dark presentation: approved accents replace legacy bright teal utilities. */
+.dark .maintainr-saas-home {
+  background: radial-gradient(circle at 78% 0%, color-mix(in srgb, var(--maintainr-sage-400) 16%, transparent), transparent 31rem), linear-gradient(145deg, var(--maintainr-ink-950), var(--maintainr-canvas) 48%, #071b1a) !important;
+}
+
+.dark .maintainr-saas-home :is([class*="text-teal-400"], [class*="text-teal-300"]) { color: var(--maintainr-sage-400) !important; }
+.dark .maintainr-saas-home [class*="text-teal-200"] { color: var(--maintainr-mint-100) !important; }
+.dark .maintainr-saas-home :is([class*="bg-teal-400/10"], [class*="bg-teal-500/10"]) { background-color: color-mix(in srgb, var(--maintainr-sage-400) 14%, transparent) !important; }
+.dark .maintainr-saas-home [class*="border-teal-400/20"] { border-color: color-mix(in srgb, var(--maintainr-sage-400) 36%, transparent) !important; }
+.dark .maintainr-saas-home [class*="bg-white/[.025]"] { background-color: color-mix(in srgb, var(--maintainr-panel-subtle) 58%, transparent) !important; }

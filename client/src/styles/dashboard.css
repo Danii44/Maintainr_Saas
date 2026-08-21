@@ -410,3 +410,158 @@ main.lg\:pl-72 > div > .mb-8 h1 { color: var(--dashboard-ink) !important; font-s
 @media (hover: none), (prefers-reduced-motion: reduce) {
   .maintainr-card-affordance::after { display: none; }
 }
+
+/* Unified dark workspace hierarchy: a distinct canvas, rail, elevated cards, and deliberate interaction contrast. */
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) {
+  --dashboard-canvas: var(--maintainr-canvas);
+  --dashboard-panel: var(--maintainr-panel);
+  --dashboard-raised: var(--maintainr-panel-subtle);
+  --dashboard-glass: color-mix(in srgb, var(--maintainr-panel) 88%, transparent);
+  --dashboard-line: color-mix(in srgb, var(--maintainr-mint-100) 18%, var(--maintainr-line));
+  --dashboard-control: color-mix(in srgb, var(--maintainr-panel-subtle) 82%, var(--maintainr-ink-950));
+  --dashboard-hover: color-mix(in srgb, var(--maintainr-sage-400) 14%, var(--maintainr-panel));
+  --dashboard-shadow: color-mix(in srgb, var(--maintainr-ink-950) 42%, transparent);
+  background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--maintainr-sage-400) 16%, transparent), transparent 30rem), linear-gradient(145deg, var(--maintainr-ink-950), var(--maintainr-canvas) 44%, #071b1a) !important;
+  color: var(--maintainr-ink);
+}
+
+.dark :is(.maintainr-dashboard-main, main.lg\:pl-72) {
+  background: radial-gradient(circle at 94% -8%, color-mix(in srgb, var(--maintainr-sage-400) 20%, transparent), transparent 24rem), linear-gradient(145deg, var(--maintainr-ink-950), var(--maintainr-canvas) 44%, #071b1a) !important;
+}
+
+.dark :is(.maintainr-dashboard-rail, aside.fixed.inset-y-0) {
+  background: linear-gradient(180deg, #102d29 0%, var(--maintainr-forest-900) 42%, var(--maintainr-ink-950) 100%) !important;
+  border-color: color-mix(in srgb, var(--maintainr-mint-100) 14%, transparent) !important;
+  box-shadow: 1rem 0 3.8rem color-mix(in srgb, var(--maintainr-ink-950) 52%, transparent), inset -1px 0 color-mix(in srgb, var(--maintainr-mint-100) 8%, transparent);
+}
+
+.dark :is(.maintainr-dashboard-rail, aside.fixed.inset-y-0) nav :is(a, button) {
+  color: var(--maintainr-on-dark-muted) !important;
+}
+
+.dark :is(.maintainr-dashboard-rail, aside.fixed.inset-y-0) nav :is(a, button):hover {
+  background: color-mix(in srgb, var(--maintainr-mint-100) 10%, transparent) !important;
+  color: var(--maintainr-on-dark) !important;
+}
+
+.dark :is(.maintainr-dashboard-rail, aside.fixed.inset-y-0) :is(.maintainr-dashboard-nav-active, [class*="bg-teal-50"]) {
+  background: linear-gradient(135deg, var(--maintainr-mint-100), #b9d6c2) !important;
+  border-color: color-mix(in srgb, var(--maintainr-mint-100) 72%, transparent) !important;
+  box-shadow: 0 .7rem 1.8rem color-mix(in srgb, var(--maintainr-ink-950) 38%, transparent);
+}
+
+.dark .maintainr-dashboard-header {
+  background: color-mix(in srgb, var(--maintainr-canvas) 72%, transparent) !important;
+  border-color: color-mix(in srgb, var(--maintainr-mint-100) 14%, var(--maintainr-line)) !important;
+  box-shadow: 0 .9rem 2.8rem var(--dashboard-shadow), inset 0 1px 0 color-mix(in srgb, var(--maintainr-mint-100) 10%, transparent);
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(.maintainr-glass-card, .maintainr-operation-card, .maintainr-oversight-card, .maintainr-demo-card, .maintainr-demo-field, .maintainr-demo-utility) {
+  background: var(--dashboard-glass) !important;
+  border-color: var(--dashboard-line) !important;
+  box-shadow: 0 1.15rem 3rem var(--dashboard-shadow), inset 0 1px 0 color-mix(in srgb, var(--maintainr-mint-100) 9%, transparent);
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(.maintainr-glass-card, .maintainr-operation-card, .maintainr-oversight-card, .maintainr-demo-card, .maintainr-demo-field, .maintainr-demo-utility):hover {
+  border-color: color-mix(in srgb, var(--maintainr-sage-400) 68%, var(--dashboard-line)) !important;
+  box-shadow: 0 1.35rem 3.35rem color-mix(in srgb, var(--maintainr-sage-400) 14%, var(--maintainr-ink-950)), inset 0 1px 0 color-mix(in srgb, var(--maintainr-mint-100) 14%, transparent);
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(table, [role="grid"]) {
+  background: color-mix(in srgb, var(--maintainr-panel) 90%, transparent);
+  border-color: var(--dashboard-line) !important;
+  color: var(--maintainr-ink);
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(thead, [role="rowheader"]) {
+  background: color-mix(in srgb, var(--maintainr-panel-subtle) 88%, var(--maintainr-ink-950));
+  color: var(--maintainr-on-dark-muted);
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(tr, [role="row"]) {
+  border-color: color-mix(in srgb, var(--maintainr-mint-100) 10%, var(--maintainr-line));
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(tbody tr:hover, [role="row"]:hover) {
+  background: var(--dashboard-hover) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(button, a)[class*="bg-white"] {
+  background: var(--dashboard-control) !important;
+  border-color: var(--dashboard-line) !important;
+  color: var(--maintainr-ink) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(button, a)[class*="bg-white"]:hover {
+  background: var(--dashboard-hover) !important;
+  color: var(--maintainr-on-dark) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(.maintainr-next-focus, .maintainr-demo-focus) {
+  background: linear-gradient(138deg, var(--maintainr-evergreen-700), var(--maintainr-forest-900) 56%, var(--maintainr-ink-950)) !important;
+  border-color: color-mix(in srgb, var(--maintainr-sage-400) 44%, transparent) !important;
+  box-shadow: 0 1.35rem 3.5rem color-mix(in srgb, var(--maintainr-ink-950) 48%, transparent), inset 0 1px 0 color-mix(in srgb, var(--maintainr-mint-100) 13%, transparent);
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(.maintainr-status-badge, .maintainr-demo-status) {
+  border-color: color-mix(in srgb, var(--maintainr-mint-100) 18%, var(--maintainr-line)) !important;
+}
+
+/* Controlled dark status palette for operational feedback across both workspaces. */
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) [class*="bg-emerald-"] {
+  background-color: color-mix(in srgb, var(--maintainr-sage-400) 18%, var(--maintainr-panel)) !important;
+  border-color: color-mix(in srgb, var(--maintainr-sage-400) 42%, var(--maintainr-line)) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) [class*="text-emerald-"] { color: #a8d5b3 !important; }
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) [class*="bg-amber-"] {
+  background-color: color-mix(in srgb, var(--chart-3) 16%, var(--maintainr-panel)) !important;
+  border-color: color-mix(in srgb, var(--chart-3) 40%, var(--maintainr-line)) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) [class*="text-amber-"] { color: #f0c56a !important; }
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) [class*="bg-rose-"] {
+  background-color: color-mix(in srgb, var(--destructive) 16%, var(--maintainr-panel)) !important;
+  border-color: color-mix(in srgb, var(--destructive) 42%, var(--maintainr-line)) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) [class*="text-rose-"] { color: #efaaa5 !important; }
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) [class*="bg-violet-"] {
+  background-color: color-mix(in srgb, var(--maintainr-sage-400) 16%, var(--maintainr-panel)) !important;
+  border-color: color-mix(in srgb, var(--maintainr-sage-400) 40%, var(--maintainr-line)) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is([class*="text-violet-"], [class*="text-cyan-"]) { color: var(--maintainr-sage-400) !important; }
+
+.dark .maintainr-demo-status-success { background: color-mix(in srgb, var(--maintainr-sage-400) 16%, var(--maintainr-panel)) !important; color: #a8d5b3 !important; }
+.dark .maintainr-demo-status-warning { background: color-mix(in srgb, var(--chart-3) 16%, var(--maintainr-panel)) !important; color: #f0c56a !important; }
+.dark .maintainr-demo-status-danger { background: color-mix(in srgb, var(--destructive) 16%, var(--maintainr-panel)) !important; color: #efaaa5 !important; }
+.dark .maintainr-demo-status-info { background: color-mix(in srgb, var(--maintainr-sage-400) 16%, var(--maintainr-panel)) !important; color: var(--maintainr-mint-100) !important; }
+
+/* Complete dark coverage for shared shadcn surfaces and legacy rounded dashboard panels. */
+.dark .maintainr-dashboard-shell main :is(article, section, div)[class*="rounded-"][class*="border"] {
+  background: var(--dashboard-glass) !important;
+  border-color: var(--dashboard-line) !important;
+  box-shadow: 0 1.15rem 3rem var(--dashboard-shadow), inset 0 1px 0 color-mix(in srgb, var(--maintainr-mint-100) 9%, transparent);
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is([role="dialog"], [role="menu"], [role="listbox"], [data-radix-popper-content-wrapper] > *) {
+  background: color-mix(in srgb, var(--maintainr-panel-subtle) 94%, var(--maintainr-ink-950)) !important;
+  border-color: var(--dashboard-line) !important;
+  color: var(--maintainr-ink) !important;
+  box-shadow: 0 1.5rem 3.8rem color-mix(in srgb, var(--maintainr-ink-950) 56%, transparent), inset 0 1px 0 color-mix(in srgb, var(--maintainr-mint-100) 9%, transparent);
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is([role="menuitem"], [role="option"], [data-radix-collection-item]):hover {
+  background: var(--dashboard-hover) !important;
+  color: var(--maintainr-on-dark) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is(input, textarea, select, [role="combobox"]) {
+  background: color-mix(in srgb, var(--maintainr-field) 92%, var(--maintainr-ink-950)) !important;
+  border-color: var(--maintainr-field-border) !important;
+  color: var(--maintainr-ink) !important;
+}
