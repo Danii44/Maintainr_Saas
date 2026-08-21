@@ -261,3 +261,42 @@ main.lg\:pl-72 > div > .mb-8 h1 { color: var(--dashboard-ink) !important; font-s
 
 .maintainr-next-focus-title { font-size: 1.5rem; font-weight: 700; line-height: 1.2; margin-block-start: 1rem; }
 .maintainr-next-focus-description { color: color-mix(in srgb, var(--maintainr-mint-100) 90%, transparent); font-size: .875rem; line-height: 1.5; margin-block-start: .75rem; }
+
+/* Premium workspace glass layer shared by SaaS and the Commercial demo. */
+.maintainr-dashboard-header {
+  background: color-mix(in srgb, var(--dashboard-canvas) 76%, transparent) !important;
+  border-color: color-mix(in srgb, var(--dashboard-line) 82%, var(--dashboard-canvas)) !important;
+  box-shadow: 0 .85rem 2.4rem color-mix(in srgb, var(--maintainr-ink-950) 9%, transparent), inset 0 1px 0 color-mix(in srgb, var(--maintainr-on-dark) 8%, transparent);
+}
+
+.maintainr-operation-card,
+.maintainr-oversight-card,
+.maintainr-dashboard-shell main :is(article, section, div)[class*="rounded-"][class*="border"] {
+  background: color-mix(in srgb, var(--dashboard-panel) 80%, transparent) !important;
+  border-color: color-mix(in srgb, var(--dashboard-line) 84%, var(--dashboard-panel)) !important;
+  box-shadow: 0 1.05rem 2.75rem color-mix(in srgb, var(--maintainr-ink-950) 8%, transparent);
+}
+
+.maintainr-dashboard-shell main :is(article, section, div)[class*="rounded-"][class*="border"]:hover {
+  border-color: color-mix(in srgb, var(--maintainr-sage-400) 62%, var(--dashboard-line)) !important;
+}
+
+.maintainr-operation-live-badge,
+.maintainr-oversight-item {
+  background: color-mix(in srgb, var(--maintainr-sage-400) 18%, var(--dashboard-panel));
+  border-color: color-mix(in srgb, var(--maintainr-sage-400) 34%, var(--dashboard-line));
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .maintainr-dashboard-header,
+  .maintainr-operation-card,
+  .maintainr-oversight-card,
+  .maintainr-dashboard-shell main :is(article, section, div)[class*="rounded-"][class*="border"] {
+    -webkit-backdrop-filter: blur(16px) saturate(128%);
+    backdrop-filter: blur(16px) saturate(128%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .maintainr-dashboard-shell main :is(article, section, div)[class*="rounded-"][class*="border"] { transition: border-color 180ms var(--ease-out, ease), box-shadow 180ms var(--ease-out, ease); }
+}
