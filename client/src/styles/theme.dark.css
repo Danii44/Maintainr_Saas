@@ -87,3 +87,36 @@
 .dark #root [class*="text-teal-700"] { color: var(--maintainr-sage-400) !important; }
 .dark #root [class*="border-violet-"],
 .dark #root [class*="border-teal-"] { border-color: var(--maintainr-line) !important; }
+
+/* Semantic dark application-shell classes used by App.tsx. */
+.dark .maintainr-app-canvas { background-color: var(--maintainr-canvas) !important; color: var(--maintainr-ink); }
+.dark .maintainr-app-panel { background-color: var(--maintainr-panel) !important; border-color: var(--maintainr-line) !important; }
+.dark .maintainr-app-panel-raised { background-color: var(--maintainr-panel-subtle) !important; border-color: var(--maintainr-line) !important; }
+.dark .maintainr-app-outline { border-color: var(--maintainr-line) !important; }
+.dark .maintainr-app-muted { color: var(--maintainr-muted) !important; }
+.dark .maintainr-app-copy { color: var(--maintainr-ink) !important; }
+.dark .maintainr-app-action { background-color: var(--maintainr-action) !important; color: var(--maintainr-action-foreground) !important; }
+.dark .maintainr-app-action:hover { background-color: var(--maintainr-action-hover) !important; color: var(--maintainr-action-foreground) !important; }
+.dark .maintainr-app-action-outline { background-color: transparent !important; border-color: var(--maintainr-line) !important; color: var(--maintainr-ink) !important; }
+.dark .maintainr-app-action-outline:hover { background-color: var(--maintainr-soft) !important; }
+.dark .maintainr-status-success { color: var(--maintainr-sage-400) !important; }
+.dark .maintainr-status-warning { color: var(--chart-3) !important; }
+.dark .maintainr-status-info { color: var(--maintainr-mint-100) !important; }
+.dark .maintainr-status-danger { color: var(--destructive) !important; }
+
+.dark .maintainr-app-action-tint {
+  background-color: color-mix(in srgb, var(--maintainr-action) 12%, transparent) !important;
+  border-color: color-mix(in srgb, var(--maintainr-action) 30%, transparent) !important;
+}
+
+.dark .maintainr-app-canvas-translucent {
+  background-color: color-mix(in srgb, var(--maintainr-canvas) 85%, transparent) !important;
+  color: var(--maintainr-ink);
+}
+
+.dark .maintainr-status-badge { border-color: var(--maintainr-line) !important; }
+.dark .maintainr-status-badge.maintainr-status-success { background-color: color-mix(in srgb, var(--maintainr-sage-400) 14%, transparent) !important; border-color: color-mix(in srgb, var(--maintainr-sage-400) 35%, transparent) !important; }
+.dark .maintainr-status-badge.maintainr-status-warning { background-color: color-mix(in srgb, var(--chart-3) 14%, transparent) !important; border-color: color-mix(in srgb, var(--chart-3) 35%, transparent) !important; }
+.dark .maintainr-status-badge.maintainr-status-info { background-color: color-mix(in srgb, var(--maintainr-mint-100) 12%, transparent) !important; border-color: color-mix(in srgb, var(--maintainr-mint-100) 30%, transparent) !important; }
+.dark .maintainr-status-badge.maintainr-status-danger { background-color: color-mix(in srgb, var(--destructive) 14%, transparent) !important; border-color: color-mix(in srgb, var(--destructive) 35%, transparent) !important; }
+.dark .maintainr-status-badge.maintainr-app-copy { background-color: color-mix(in srgb, var(--maintainr-muted) 12%, transparent) !important; }

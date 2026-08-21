@@ -94,3 +94,170 @@ main.lg\:pl-72 > div > .mb-8 h1 { color: var(--dashboard-ink) !important; font-s
     .maintainr-dashboard-main > :last-child { padding-bottom: max(7rem, calc(5rem + env(safe-area-inset-bottom))) !important; }
   }
 }
+
+/* Semantic analytics primitives shared by dashboard overlays. */
+.maintainr-progress,
+.maintainr-operation-progress,
+.maintainr-resolution-progress,
+.maintainr-operation-bar progress {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  border-radius: 999px;
+  display: block;
+  overflow: hidden;
+  width: 100%;
+}
+
+.maintainr-progress {
+  background: var(--maintainr-soft);
+  block-size: .5rem;
+}
+
+.maintainr-progress::-webkit-progress-bar,
+.maintainr-operation-progress::-webkit-progress-bar,
+.maintainr-resolution-progress::-webkit-progress-bar,
+.maintainr-operation-bar progress::-webkit-progress-bar {
+  background: var(--maintainr-soft);
+  border-radius: inherit;
+}
+
+.maintainr-progress::-webkit-progress-value,
+.maintainr-progress::-moz-progress-bar,
+.maintainr-operation-progress.maintainr-operation-tone-primary::-webkit-progress-value,
+.maintainr-operation-progress.maintainr-operation-tone-primary::-moz-progress-bar,
+.maintainr-resolution-progress::-webkit-progress-value,
+.maintainr-resolution-progress::-moz-progress-bar,
+.maintainr-operation-bar progress::-webkit-progress-value,
+.maintainr-operation-bar progress::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--maintainr-evergreen-700), var(--maintainr-sage-400));
+  border-radius: inherit;
+}
+
+.maintainr-operation-progress.maintainr-operation-tone-secondary::-webkit-progress-value,
+.maintainr-operation-progress.maintainr-operation-tone-secondary::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--maintainr-forest-900), var(--maintainr-mint-100));
+}
+
+.maintainr-operation-progress.maintainr-operation-tone-warning::-webkit-progress-value,
+.maintainr-operation-progress.maintainr-operation-tone-warning::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--maintainr-warning), var(--maintainr-sage-400));
+}
+
+.maintainr-operation-progress.maintainr-operation-tone-accent::-webkit-progress-value,
+.maintainr-operation-progress.maintainr-operation-tone-accent::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--maintainr-evergreen-800), var(--maintainr-mint-100));
+}
+
+.maintainr-chart-legend-marker {
+  background: var(--maintainr-action);
+  border-radius: .25rem;
+  display: inline-block;
+  flex: 0 0 auto;
+  block-size: .5rem;
+  inline-size: .5rem;
+}
+
+.maintainr-operation-card {
+  background: var(--maintainr-panel) !important;
+  border-color: var(--maintainr-line) !important;
+  box-shadow: 0 1rem 2.25rem color-mix(in srgb, var(--maintainr-ink-950) 16%, transparent);
+  overflow: hidden;
+}
+
+.maintainr-operation-card-accent {
+  block-size: .25rem;
+  inset-block-start: 0;
+  inset-inline: 0;
+  position: absolute;
+}
+
+.maintainr-operation-card-accent.maintainr-operation-tone-primary { background: linear-gradient(90deg, var(--maintainr-evergreen-700), var(--maintainr-sage-400)); }
+.maintainr-operation-card-accent.maintainr-operation-tone-secondary { background: linear-gradient(90deg, var(--maintainr-forest-900), var(--maintainr-mint-100)); }
+.maintainr-operation-card-accent.maintainr-operation-tone-warning { background: linear-gradient(90deg, var(--maintainr-warning), var(--maintainr-sage-400)); }
+.maintainr-operation-card-accent.maintainr-operation-tone-accent { background: linear-gradient(90deg, var(--maintainr-evergreen-800), var(--maintainr-mint-100)); }
+
+.maintainr-operation-label,
+.maintainr-operation-description,
+.maintainr-operation-bar > span,
+.maintainr-resolution-meter > span:last-child {
+  color: var(--maintainr-muted);
+  font-size: .75rem;
+}
+
+.maintainr-operation-label { font-weight: 650; }
+.maintainr-operation-value { color: var(--maintainr-ink); font-size: 2.25rem; font-weight: 700; letter-spacing: -.05em; line-height: 1; }
+.maintainr-operation-card-title { color: var(--maintainr-ink); font-size: 1rem; font-weight: 700; }
+.maintainr-operation-description { line-height: 1.45; margin-block-start: .35rem; }
+.maintainr-operation-progress { background: var(--maintainr-soft); block-size: .375rem; margin-block-start: .85rem; }
+
+.maintainr-operation-live-badge {
+  align-items: center;
+  background: color-mix(in srgb, var(--maintainr-sage-400) 26%, transparent);
+  border-radius: 999px;
+  color: var(--maintainr-action);
+  display: inline-flex;
+  font-size: .75rem;
+  font-weight: 700;
+  min-block-size: 1.75rem;
+  padding-inline: .75rem;
+}
+
+.maintainr-resolution-meter {
+  align-items: center;
+  background: color-mix(in srgb, var(--maintainr-sage-400) 22%, var(--maintainr-panel));
+  border: .75rem solid var(--maintainr-mint-100);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  block-size: 10rem;
+  inline-size: 10rem;
+}
+
+.maintainr-resolution-progress { background: var(--maintainr-soft); block-size: .5rem; margin-block-start: 1.25rem; max-inline-size: 15rem; }
+.maintainr-resolution-meter + .maintainr-resolution-progress + .maintainr-operation-description { margin-block-start: 1.25rem; text-align: center; }
+
+.maintainr-operation-bars {
+  align-items: end;
+  border-block-end: 1px dashed var(--maintainr-line);
+  display: flex;
+  gap: .75rem;
+  min-block-size: 11rem;
+  padding-block-end: 1rem;
+}
+
+.maintainr-operation-bar { align-items: center; display: flex; flex: 1; flex-direction: column; gap: .5rem; justify-content: end; min-inline-size: 0; }
+.maintainr-operation-bar progress { background: var(--maintainr-soft); block-size: 8rem; transform: rotate(-90deg); transform-origin: center; inline-size: 8rem; }
+.maintainr-operation-bar > span { font-size: .625rem; text-align: center; }
+
+.maintainr-oversight-card { background: var(--maintainr-panel) !important; border-color: var(--maintainr-line) !important; }
+.maintainr-oversight-title { color: var(--maintainr-ink); font-size: 1rem; font-weight: 700; }
+.maintainr-oversight-item { background: var(--maintainr-soft); border: 1px solid var(--maintainr-line); border-radius: .75rem; color: var(--maintainr-action); display: block; padding: .75rem; }
+.maintainr-oversight-item:hover { border-color: var(--maintainr-sage-400); }
+.maintainr-oversight-item-title { color: var(--maintainr-ink); font-size: .875rem; font-weight: 600; }
+.maintainr-oversight-item-meta,
+.maintainr-oversight-empty { color: var(--maintainr-muted); font-size: .75rem; }
+.maintainr-oversight-empty { font-size: .875rem; }
+
+@media (max-width: 639px) {
+  .maintainr-operation-bars { gap: .35rem; }
+  .maintainr-operation-bar progress { block-size: 6rem; inline-size: 6rem; }
+}
+
+.maintainr-next-focus {
+  background: linear-gradient(145deg, var(--maintainr-evergreen-700), var(--maintainr-forest-900)) !important;
+  border-color: transparent !important;
+}
+
+.maintainr-next-focus-eyebrow {
+  color: color-mix(in srgb, var(--maintainr-mint-100) 82%, transparent);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.maintainr-next-focus-title { font-size: 1.5rem; font-weight: 700; line-height: 1.2; margin-block-start: 1rem; }
+.maintainr-next-focus-description { color: color-mix(in srgb, var(--maintainr-mint-100) 90%, transparent); font-size: .875rem; line-height: 1.5; margin-block-start: .75rem; }
