@@ -13,6 +13,8 @@ const PASSWORD_KEY_LENGTH = 64;
 const PASSWORD_SALT_LENGTH = 16;
 const SESSION_BYTES = 32;
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30;
+const MIN_NEW_PASSWORD_LENGTH = 12;
+const MAX_NEW_PASSWORD_LENGTH = 128;
 const MAX_LOGIN_ATTEMPTS = 8;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 const attempts = new Map<string, { count: number; resetAt: number }>();
@@ -26,6 +28,9 @@ function hashToken(token: string) {
 }
 
 export async function hashPassword(password: string) {
+  if (password.length < MIN_NEW_PASSWORD_LENGTH || password.length > MAX_NEW_PASSWORD_LENGTH) {
+    throw new Error(`Use a password between ${MIN_NEW_PASSWORD_LENGTH} and ${MAX_NEW_PASSWORD_LENGTH} characters / استخدم كلمة مرور بين ${MIN_NEW_PASSWORD_LENGTH} و${MAX_NEW_PASSWORD_LENGTH} حرفاً`);
+  }
   const salt = randomBytes(PASSWORD_SALT_LENGTH).toString("hex");
   const derived = (await scrypt(password, salt, PASSWORD_KEY_LENGTH)) as Buffer;
   return `scrypt$${salt}$${derived.toString("hex")}`;
@@ -242,4 +247,4 @@ export function sessionCookieOptions(req: Request) {
   return { httpOnly: true, sameSite: "lax" as const, secure, path: "/" };
 }
 
-export { COOKIE_NAME, ONE_YEAR_MS };
+export { COOKIE_NAME, ONE_YEAR_MS, MIN_NEW_PASSWORD_LENGTH, MAX_NEW_PASSWORD_LENGTH };

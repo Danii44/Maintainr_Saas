@@ -3,3 +3,17 @@ packages:
 
 patchedDependencies:
   wouter@3.7.1: patches/wouter@3.7.1.patch
+
+# Pin patched transitive runtime dependencies until upstream ranges adopt them.
+overrides:
+  mermaid: 11.17.0
+  dompurify: 3.4.14
+  mdast-util-to-hast: 13.2.1
+  follow-redirects: 1.16.0
+  form-data: 4.0.6
+  qs: 6.15.3
+  path-to-regexp: 0.1.13
+  lodash-es: 4.18.1
+  lodash: 4.18.1
+  uuid: 11.1.1
+  body-parser: 1.20.6

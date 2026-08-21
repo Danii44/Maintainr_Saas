@@ -15,7 +15,7 @@ const authMocks = vi.hoisted(() => ({
   sessionCookieOptions: vi.fn(() => ({ httpOnly: true, sameSite: "lax", secure: true, path: "/" })),
 }));
 
-vi.mock("./auth", () => ({ ...authMocks, COOKIE_NAME: "app_session_id", ONE_YEAR_MS: 1000 * 60 * 60 * 24 * 365 }));
+vi.mock("./auth", () => ({ ...authMocks, COOKIE_NAME: "app_session_id", ONE_YEAR_MS: 1000 * 60 * 60 * 24 * 365, MIN_NEW_PASSWORD_LENGTH: 12, MAX_NEW_PASSWORD_LENGTH: 128 }));
 
 const user = { id: 7, openId: "local_7", clerkUserId: null, organizationId: 2, unitId: null, name: "Local User", email: "local@example.com", passwordHash: null, phone: null, role: "PROPERTY_MANAGER" as const, loginMethod: "password", createdAt: new Date(), updatedAt: new Date(), lastSignedIn: new Date() };
 
@@ -32,7 +32,7 @@ describe("local auth router", () => {
   it("signs in and sets a secure session cookie", async () => {
     authMocks.authenticate.mockResolvedValue({ user, token: "raw-session" });
     const { ctx, cookies } = context();
-    const result = await appRouter.createCaller(ctx).auth.signIn({ email: "local@example.com", password: "password123" });
+    const result = await appRouter.createCaller(ctx).auth.signIn({ email: "local@example.com", password: "MaintainrTest1!" });
     expect(result).toMatchObject({ id: user.id, email: user.email, role: user.role });
     expect(result).not.toHaveProperty("passwordHash");
     expect(cookies[0]).toMatchObject({ name: "app_session_id", value: "raw-session", options: { httpOnly: true, secure: true, sameSite: "lax" } });
@@ -41,16 +41,16 @@ describe("local auth router", () => {
   it("signs up and preserves the returned role", async () => {
     authMocks.register.mockResolvedValue({ user, token: "new-session" });
     const { ctx } = context();
-    const result = await appRouter.createCaller(ctx).auth.signUp({ name: "Local User", email: "local@example.com", password: "password123" });
+    const result = await appRouter.createCaller(ctx).auth.signUp({ name: "Local User", email: "local@example.com", password: "MaintainrTest1!" });
     expect(result.role).toBe("PROPERTY_MANAGER");
     expect(result).not.toHaveProperty("passwordHash");
-    expect(authMocks.register).toHaveBeenCalledWith("local@example.com", "password123", "Local User");
+    expect(authMocks.register).toHaveBeenCalledWith("local@example.com", "MaintainrTest1!", "Local User");
   });
 
   it("creates an isolated Manager workspace and sets its private session cookie", async () => {
     authMocks.registerWorkspace.mockResolvedValue({ user, organization: { id: 21, name: "Northstar Realty" }, token: "workspace-session" });
     const { ctx, cookies } = context();
-    const input = { name: "Workspace Owner", email: "owner@northstar.example", password: "password123", organizationName: "Northstar Realty", organizationNameArabic: "نورث ستار", portfolioCategory: "MULTI_FAMILY" as const, portfolioSizeRange: "11-50" as const, firstPropertyName: "Northstar Tower", firstPropertyAddress: "123 Market Street" };
+    const input = { name: "Workspace Owner", email: "owner@northstar.example", password: "MaintainrTest1!", organizationName: "Northstar Realty", organizationNameArabic: "نورث ستار", portfolioCategory: "MULTI_FAMILY" as const, portfolioSizeRange: "11-50" as const, firstPropertyName: "Northstar Tower", firstPropertyAddress: "123 Market Street" };
     const result = await appRouter.createCaller(ctx).auth.createWorkspace(input);
     expect(result).toMatchObject({ id: user.id, email: user.email, role: user.role });
     expect(result).not.toHaveProperty("passwordHash");
@@ -64,9 +64,9 @@ describe("local auth router", () => {
     const { ctx } = context(); ctx.user = user;
     const caller = appRouter.createCaller(ctx);
     await expect(caller.auth.updateProfile({ name: "Updated User", phone: "+123456789", avatarUrl: "https://cdn.example/avatar.png" })).resolves.toMatchObject({ name: "Updated User" });
-    await expect(caller.auth.changePassword({ currentPassword: "password123", nextPassword: "newpassword123" })).resolves.toEqual({ success: true });
+    await expect(caller.auth.changePassword({ currentPassword: "MaintainrTest1!", nextPassword: "MaintainrNext1!" })).resolves.toEqual({ success: true });
     expect(authMocks.updateProfile).toHaveBeenCalledWith(user.id, { name: "Updated User", phone: "+123456789", avatarUrl: "https://cdn.example/avatar.png" });
-    expect(authMocks.changePassword).toHaveBeenCalledWith(user.id, "password123", "newpassword123", undefined);
+    expect(authMocks.changePassword).toHaveBeenCalledWith(user.id, "MaintainrTest1!", "MaintainrNext1!", undefined);
   });
 
   it("returns the authenticated context user through auth.me", async () => {
@@ -90,6 +90,6 @@ describe("local auth router", () => {
     authMocks.resetPassword.mockResolvedValue({ success: true });
     const { ctx } = context();
     expect(await appRouter.createCaller(ctx).auth.requestPasswordReset({ email: "unknown@example.com" })).toEqual({ accepted: true });
-    expect(await appRouter.createCaller(ctx).auth.resetPassword({ token: "a".repeat(20), password: "password123" })).toEqual({ success: true });
+    expect(await appRouter.createCaller(ctx).auth.resetPassword({ token: "a".repeat(20), password: "MaintainrTest1!" })).toEqual({ success: true });
   });
 });

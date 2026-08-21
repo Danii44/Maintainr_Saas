@@ -37,7 +37,7 @@ describe("workspace registration", () => {
     const result = await registerWorkspace({
       name: "Northstar Owner",
       email: " OWNER@NORTHSTAR.EXAMPLE ",
-      password: "password123",
+      password: "MaintainrTest1!",
       organizationName: "Northstar Realty",
       organizationNameArabic: "نورث ستار",
       portfolioCategory: "MULTI_FAMILY",
@@ -48,7 +48,7 @@ describe("workspace registration", () => {
 
     expect(result.organization).toMatchObject({ id: 42, name: "Northstar Realty", portfolioCategory: "MULTI_FAMILY", portfolioSizeRange: "11-50" });
     expect(result.user).toMatchObject({ id: 84, organizationId: 42, email: "owner@northstar.example", name: "Northstar Owner", role: "PROPERTY_MANAGER", loginMethod: "password" });
-    expect(await verifyPassword("password123", result.user.passwordHash!)).toBe(true);
+    expect(await verifyPassword("MaintainrTest1!", result.user.passwordHash!)).toBe(true);
     expect(transactionInserts).toHaveLength(4);
     expect(transactionInserts[2].value).toMatchObject({ organizationId: 42, projectName: "Northstar Realty", projectNameArabic: "نورث ستار", updatedById: 84 });
     expect(transactionInserts[3].value).toMatchObject({ organizationId: 42, name: "Northstar Tower", address: "123 Market Street" });
@@ -60,7 +60,7 @@ describe("workspace registration", () => {
     const { db } = createWorkspaceDb({ id: 5 });
     getDbMock.mockResolvedValue(db);
 
-    await expect(registerWorkspace({ name: "Duplicate", email: "existing@example.com", password: "password123", organizationName: "Duplicate Realty" })).rejects.toThrow("An account already exists for this email");
+    await expect(registerWorkspace({ name: "Duplicate", email: "existing@example.com", password: "MaintainrTest1!", organizationName: "Duplicate Realty" })).rejects.toThrow("An account already exists for this email");
     expect(db.transaction).not.toHaveBeenCalled();
   });
 });
