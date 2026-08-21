@@ -173,3 +173,16 @@
 .dark .maintainr-saas-home :is([class*="bg-teal-400/10"], [class*="bg-teal-500/10"]) { background-color: color-mix(in srgb, var(--maintainr-sage-400) 14%, transparent) !important; }
 .dark .maintainr-saas-home [class*="border-teal-400/20"] { border-color: color-mix(in srgb, var(--maintainr-sage-400) 36%, transparent) !important; }
 .dark .maintainr-saas-home [class*="bg-white/[.025]"] { background-color: color-mix(in srgb, var(--maintainr-panel-subtle) 58%, transparent) !important; }
+
+/* Global dark compatibility for legacy utility colors outside the workspace shell. */
+.dark #root :is([class*="bg-violet-"], [class*="bg-cyan-"], [class*="bg-sky-"]) {
+  background-color: color-mix(in srgb, var(--maintainr-sage-400) 16%, var(--maintainr-panel)) !important;
+  border-color: color-mix(in srgb, var(--maintainr-sage-400) 36%, var(--maintainr-line)) !important;
+}
+
+.dark #root :is([class*="text-violet-"], [class*="text-cyan-"], [class*="text-sky-"], [class*="text-teal-300"], [class*="text-teal-400"]) { color: var(--maintainr-sage-400) !important; }
+.dark #root :is([class*="border-violet-"], [class*="border-cyan-"], [class*="border-sky-"], [class*="border-teal-"]) { border-color: var(--maintainr-line) !important; }
+.dark #root [class*="bg-amber-"] { background-color: color-mix(in srgb, var(--chart-3) 14%, var(--maintainr-panel)) !important; }
+.dark #root [class*="text-amber-"] { color: #f0c56a !important; }
+.dark #root [class*="bg-rose-"] { background-color: color-mix(in srgb, var(--destructive) 14%, var(--maintainr-panel)) !important; }
+.dark #root [class*="text-rose-"] { color: #efaaa5 !important; }

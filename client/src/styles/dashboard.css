@@ -608,3 +608,19 @@ main.lg\:pl-72 > div > .mb-8 h1 { color: var(--dashboard-ink) !important; font-s
   border-color: color-mix(in srgb, var(--maintainr-mint-100) 16%, transparent) !important;
   box-shadow: none !important;
 }
+
+/* Legacy operations-panel compatibility: keep older utility classes semantic in dark mode. */
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is([class*="border-slate-"], [class*="border-gray-"], [class*="border-zinc-"]) {
+  border-color: var(--dashboard-line) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) [class*="bg-teal-50"] {
+  background-color: color-mix(in srgb, var(--maintainr-sage-400) 14%, var(--maintainr-panel)) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) :is([class*="text-teal-700"], [class*="text-teal-800"], [class*="text-teal-900"]) {
+  color: var(--maintainr-sage-400) !important;
+}
+
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) [class*="text-slate-500"] { color: var(--maintainr-muted) !important; }
+.dark :is(.maintainr-dashboard-shell, .maintainr-demo-shell) [class*="text-slate-400"] { color: var(--maintainr-placeholder) !important; }
