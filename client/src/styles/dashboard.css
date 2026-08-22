@@ -15,6 +15,26 @@ main.lg\:pl-72 {
 
 .maintainr-dashboard-shell { --maintainr-control-surface: var(--maintainr-panel); --maintainr-control-border: var(--maintainr-line); --maintainr-control-text: var(--maintainr-action); --maintainr-row-hover: var(--maintainr-soft); }
 
+/* Shared demo/auth surfaces. These classes are the single source of truth for demo and sign-in experiences. */
+.maintainr-demo-canvas { background: var(--maintainr-canvas); color: var(--maintainr-ink); }
+.maintainr-demo-ink { color: var(--maintainr-ink); }
+.maintainr-demo-muted { color: var(--maintainr-muted); }
+.maintainr-demo-line { border-color: var(--maintainr-line); }
+.maintainr-demo-rail-surface { background: linear-gradient(155deg, var(--maintainr-forest-900), var(--maintainr-ink-950)); color: var(--maintainr-on-dark); }
+.maintainr-demo-rail-surface :is(h1, h2, h3, b, .text-white) { color: var(--maintainr-on-dark); }
+.maintainr-demo-rail-surface :is(.text-slate-300, .text-slate-400, .text-slate-500, .maintainr-demo-muted) { color: var(--maintainr-on-dark-muted); }
+.maintainr-demo-action-text { color: var(--maintainr-mint-100); }
+.maintainr-demo-action { background: var(--maintainr-action); color: var(--maintainr-action-foreground); }
+.maintainr-demo-action:hover { background: var(--maintainr-action-hover); }
+.maintainr-demo-utility { background: var(--maintainr-soft); color: var(--maintainr-action); }
+.maintainr-demo-field { background: var(--maintainr-field); border-color: var(--maintainr-field-border); color: var(--maintainr-ink); }
+.maintainr-demo-panel { background: var(--maintainr-panel); }
+.maintainr-demo-rail-panel { background: color-mix(in srgb, var(--maintainr-mint-100) 7%, transparent); border-color: color-mix(in srgb, var(--maintainr-mint-100) 20%, transparent); }
+.maintainr-demo-role-card { background: color-mix(in srgb, var(--maintainr-mint-100) 3%, transparent); border-color: color-mix(in srgb, var(--maintainr-mint-100) 15%, transparent); color: var(--maintainr-on-dark); }
+.maintainr-demo-role-card:hover { background: color-mix(in srgb, var(--maintainr-mint-100) 8%, transparent); }
+.maintainr-demo-role-card-active { background: color-mix(in srgb, var(--maintainr-mint-100) 12%, transparent); border-color: color-mix(in srgb, var(--maintainr-mint-100) 70%, transparent); }
+
+
 aside.fixed.inset-y-0,
 .maintainr-dashboard-rail {
   background: linear-gradient(180deg, var(--maintainr-forest-900), var(--maintainr-ink-950)) !important;
